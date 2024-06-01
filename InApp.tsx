@@ -1,5 +1,6 @@
+// InApp.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Modal } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Modal, TouchableWithoutFeedback } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -37,7 +38,7 @@ const InApp: React.FC<Props> = ({ route, navigation }) => {
         <Tab.Screen name="Timeline" component={Timeline} />
         <Tab.Screen name="Goals" component={Goals} />
       </Tab.Navigator>
-      <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={[styles.fab]} onPress={() => setModalVisible(true)}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
       <Modal
@@ -46,16 +47,24 @@ const InApp: React.FC<Props> = ({ route, navigation }) => {
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.modalButton} onPress={handleCreateGoal}>
-              <Text style={styles.modalButtonText}>Create Goal</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={handleCreateTask}>
-              <Text style={styles.modalButtonText}>Create Task</Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.buttonContainer}>
+                <Text style={styles.buttonCaption}>Task</Text>
+                <TouchableOpacity style={[styles.modalButton, styles.taskButton]} onPress={handleCreateTask}>
+                  <Text style={[styles.modalButtonText, styles.taskButtonText]}>+</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.buttonContainer}>
+                <Text style={styles.buttonCaption}>Goal</Text>
+                <TouchableOpacity style={styles.modalButton} onPress={handleCreateGoal}>
+                  <Text style={styles.modalButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -71,10 +80,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 60,
     height: 60,
+    bottom: 60,
     alignItems: 'center',
     justifyContent: 'center',
     right: 30,
-    bottom: 30,
     backgroundColor: '#03A9F4',
     borderRadius: 30,
     elevation: 8,
@@ -91,19 +100,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
+    position: 'absolute',
+    bottom: 50, // Align modal content with the FAB
+    right: 30,
     alignItems: 'center',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonCaption: {
+    marginRight: 10,
+    fontSize: 18,
+  },
   modalButton: {
-    padding: 10,
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#03A9F4',
-    borderRadius: 5,
-    marginVertical: 5,
+    borderRadius: 30,
+    elevation: 8, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
   },
   modalButtonText: {
-    fontSize: 18,
-    color: '#fff',
+    fontSize: 24,
+    color: 'white',
+  },
+  taskButton: {
+    backgroundColor: 'white',
+    borderColor: '#03A9F4',
+    borderWidth: 2,
+  },
+  taskButtonText: {
+    color: '#03A9F4',
   },
 });
