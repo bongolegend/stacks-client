@@ -3,6 +3,7 @@
     "name": "stacks-client",
     "slug": "stacks-client",
     "version": "1.0.0",
+    "entrypoint": "./App.tsx",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
