@@ -1,60 +1,50 @@
 // Login.tsx
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import uuid from 'react-native-uuid';
+import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigation } from '@react-navigation/native';
+import { createUser } from './api';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types';
+import { RootStackParamList } from './types';
+import { useUser } from './UserContext';
 
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'InApp'>;
 
-type Props = {
-  navigation: StackNavigationProp<RootStackParamList, 'Login'>,
-  route: RouteProp<RootStackParamList, 'Login'>
-};
+const Login: React.FC = () => {
+  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const { setUser } = useUser();
 
-const Login: React.FC<Props> = ({ navigation }) => {
-  const [username, setUsername] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
+  const mutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: (data) => {
+      setUser(data);
+      navigation.navigate('InApp');
+    },
+  });
 
-  const mockCreateAccount = () => {
-    return new Promise<{ id: string, username: string | null, email: string | null }>((resolve) => {
-      setTimeout(() => {
-        const user = {
-          id: uuid.v4() as string,
-          username: username,
-          email: email,
-        };
-        resolve(user);
-      }, 10);
-    });
-  };
-
-  const handleCreateAccount = async () => {
-    try {
-      const user = await mockCreateAccount();
-      navigation.navigate('InApp', { userId: user.id });
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to create account');
-    }
+  const handleCreateUser = () => {
+    mutation.mutate({ email, username });
   };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        value={username || ''}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        value={email || ''}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
       />
-      <Button title="Create Account" onPress={handleCreateAccount} />
+      <Button title="Create Account" onPress={handleCreateUser} />
+      {mutation.isLoading && <Text>Loading...</Text>}
+      {mutation.isError && <Text>Error creating user</Text>}
     </View>
   );
 };
@@ -64,17 +54,16 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 16,
   },
   input: {
-    height: 40,
+    width: '100%',
+    padding: 8,
+    marginBottom: 16,
     borderColor: '#ccc',
     borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    width: '80%',
+    borderRadius: 4,
   },
 });

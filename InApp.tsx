@@ -19,7 +19,7 @@ type Props = {
 const Tab = createBottomTabNavigator();
 
 const InApp: React.FC<Props> = ({ route, navigation }) => {
-  const { userId } = route.params;
+  // const { userId } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleCreateGoal = () => {

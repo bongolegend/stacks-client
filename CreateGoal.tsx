@@ -1,16 +1,32 @@
-import React, { useRef, useEffect } from 'react';
+// CreateGoal.tsx
+import React, { useRef, useEffect, useState } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createGoal } from './api';
 import { RootStackParamList } from './types';
 import { useNotification } from './NotificationContext';
+import { useUser } from './UserContext';
 
 type CreateGoalScreenNavigationProp = StackNavigationProp<RootStackParamList, 'CreateGoal'>;
 
 const CreateGoal: React.FC = () => {
   const navigation = useNavigation<CreateGoalScreenNavigationProp>();
   const { showNotification } = useNotification();
+  const { user } = useUser();
   const textInputRef = useRef<TextInput>(null);
+  const [description, setDescription] = useState<string>('');
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: createGoal,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['goals']);
+      showNotification('Goal Posted');
+      navigation.goBack();
+    },
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,14 +38,15 @@ const CreateGoal: React.FC = () => {
   }, []);
 
   const handlePost = () => {
-    showNotification("Goal Posted");
-    navigation.goBack();
+    if (user) {
+      mutation.mutate({ user_id: user.id, description, is_completed: false });
+    }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.header}>
         <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
@@ -45,6 +62,8 @@ const CreateGoal: React.FC = () => {
           style={styles.textInput}
           placeholder="Enter your goal..."
           multiline
+          value={description}
+          onChangeText={setDescription}
         />
       </View>
     </KeyboardAvoidingView>
