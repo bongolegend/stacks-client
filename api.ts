@@ -1,3 +1,4 @@
+// api.ts
 import axios from 'axios';
 
 const api = axios.create({
@@ -21,6 +22,10 @@ export const createTask = async (task: { user_id: string; goal_id: string; descr
 
 export const fetchGoals = async (user_id: string) => {
   const { data } = await api.get(`/0/goals?user_id=${user_id}`);
-  console.log(data);
+  return data;
+};
+
+export const updateGoalCompletion = async ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) => {
+  const { data } = await api.patch(`/0/goals/${goalId}`, { is_completed });
   return data;
 };
