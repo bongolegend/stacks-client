@@ -25,7 +25,17 @@ export const fetchGoals = async (user_id: string) => {
   return data;
 };
 
+export const fetchTasks = async (user_id: string) => {
+  const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
+  return data;
+};
+
 export const updateGoalCompletion = async ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) => {
   const { data } = await api.patch(`/0/goals/${goalId}`, { is_completed });
+  return data;
+};
+
+export const updateTaskCompletion = async ({ taskId, is_completed }: { taskId: string; is_completed: boolean }) => {
+  const { data } = await api.patch(`/0/tasks/${taskId}`, { is_completed });
   return data;
 };

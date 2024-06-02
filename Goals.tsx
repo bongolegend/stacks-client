@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, updateGoalCompletion } from './api';
+import { fetchGoals, fetchTasks, updateGoalCompletion, updateTaskCompletion } from './api';
 import { useUser } from './UserContext';
 
 interface Goal {
@@ -13,10 +13,19 @@ interface Goal {
   created_at: string;
 }
 
+interface Task {
+  id: string;
+  user_id: string;
+  goal_id: string;
+  description: string;
+  is_completed: boolean;
+  created_at: string;
+}
+
 const Goals: React.FC = () => {
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{ type: 'goal' | 'task'; item: Goal | Task } | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const { data: goals, isLoading: goalsLoading } = useQuery({
@@ -25,51 +34,93 @@ const Goals: React.FC = () => {
     enabled: !!user,
   });
 
-  const mutation = useMutation({
-    mutationFn: ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) => 
+  const { data: tasks, isLoading: tasksLoading } = useQuery({
+    queryKey: ['tasks', user?.id],
+    queryFn: () => fetchTasks(user!.id),
+    enabled: !!user,
+  });
+
+  const goalMutation = useMutation({
+    mutationFn: ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) =>
       updateGoalCompletion({ goalId, is_completed }),
     onSuccess: () => {
       queryClient.invalidateQueries(['goals', user?.id]);
     },
   });
 
-  const handleOpenModal = (goal: Goal) => {
-    setSelectedGoal(goal);
+  const taskMutation = useMutation({
+    mutationFn: ({ taskId, is_completed }: { taskId: string; is_completed: boolean }) =>
+      updateTaskCompletion({ taskId, is_completed }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['tasks', user?.id]);
+    },
+  });
+
+  const handleOpenModal = (type: 'goal' | 'task', item: Goal | Task) => {
+    setSelectedItem({ type, item });
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setSelectedGoal(null);
+    setSelectedItem(null);
   };
 
-  const handleToggleGoal = () => {
-    if (selectedGoal) {
-      mutation.mutate({
-        goalId: selectedGoal.id,
-        is_completed: !selectedGoal.is_completed,
-      });
+  const handleToggleCompletion = () => {
+    if (selectedItem) {
+      const { type, item } = selectedItem;
+      if (type === 'goal') {
+        goalMutation.mutate({
+          goalId: (item as Goal).id,
+          is_completed: !(item as Goal).is_completed,
+        });
+      } else if (type === 'task') {
+        taskMutation.mutate({
+          taskId: (item as Task).id,
+          is_completed: !(item as Task).is_completed,
+        });
+      }
       handleCloseModal();
     }
   };
 
+  const renderTaskItem = ({ item }: { item: Task }) => (
+    <View style={styles.taskItem}>
+      <TouchableOpacity
+        style={[styles.taskCompleteButton, item.is_completed && styles.completedButton]}
+        onPress={() => handleOpenModal('task', item)}
+      />
+      <View style={styles.taskTextContainer}>
+        <Text style={styles.taskDescription}>{item.description}</Text>
+      </View>
+    </View>
+  );
+
   const renderItem = ({ item }: { item: Goal }) => (
     <View style={styles.goalItem}>
-      <TouchableOpacity
-        style={[styles.completeButton, item.is_completed && styles.completedButton]}
-        onPress={() => handleOpenModal(item)}
-      />
-      <View style={styles.goalTextContainer}>
-        <Text style={styles.goalDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
-        <Text style={styles.goalDescription}>{item.description}</Text>
+      <View style={styles.goalContent}>
+        <TouchableOpacity
+          style={[styles.completeButton, item.is_completed && styles.completedButton]}
+          onPress={() => handleOpenModal('goal', item)}
+        />
+        <View style={styles.goalTextContainer}>
+          <Text style={styles.goalDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+          <Text style={styles.goalDescription}>{item.description}</Text>
+        </View>
       </View>
+      <FlatList
+        data={tasks?.filter(task => task.goal_id === item.id)}
+        renderItem={renderTaskItem}
+        keyExtractor={(task) => task.id}
+        nestedScrollEnabled={true}
+      />
     </View>
   );
 
   return (
     <View style={styles.container}>
-      {goalsLoading ? (
-        <Text>Loading goals...</Text>
+      {goalsLoading || tasksLoading ? (
+        <Text>Loading...</Text>
       ) : (
         <FlatList
           data={goals}
@@ -77,7 +128,7 @@ const Goals: React.FC = () => {
           keyExtractor={(item) => item.id}
         />
       )}
-      {selectedGoal && (
+      {selectedItem && (
         <Modal
           transparent={true}
           visible={modalVisible}
@@ -87,15 +138,15 @@ const Goals: React.FC = () => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>
-                {selectedGoal.is_completed
-                  ? 'Are you sure you want to un-mark this goal as complete?'
-                  : 'Are you sure you want to mark this goal as complete?'}
+                {selectedItem.item.is_completed
+                  ? `Are you sure you want to un-mark this ${selectedItem.type} as complete?`
+                  : `Are you sure you want to mark this ${selectedItem.type} as complete?`}
               </Text>
               <View style={styles.modalButtons}>
                 <TouchableOpacity style={styles.cancelButton} onPress={handleCloseModal}>
                   <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.confirmButton} onPress={handleToggleGoal}>
+                <TouchableOpacity style={styles.confirmButton} onPress={handleToggleCompletion}>
                   <Text style={styles.buttonText}>Confirm</Text>
                 </TouchableOpacity>
               </View>
@@ -115,17 +166,32 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   goalItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginBottom: 16,
   },
+  goalContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   goalTextContainer: {
+    marginLeft: 8,
+    flex: 1,
+  },
+  taskItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 32, // Indent the task items
+    marginBottom: 8,
+  },
+  taskTextContainer: {
     marginLeft: 8,
     flex: 1,
   },
   goalDescription: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  taskDescription: {
+    fontSize: 14,
   },
   goalDate: {
     fontSize: 12,
@@ -139,6 +205,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ccc',
     borderRadius: 15, // Circle
+  },
+  taskCompleteButton: {
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ccc',
+    borderRadius: 10, // Smaller circle
   },
   completedButton: {
     backgroundColor: '#B0E57C', // Pastel green color
