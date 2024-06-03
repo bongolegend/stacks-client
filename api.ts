@@ -35,6 +35,11 @@ export const fetchTasks = async (user_id: string) => {
   return data;
 };
 
+export const fetchTimeline = async (user_id: string) => {
+  const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
+  return data;
+};
+
 export const updateGoalCompletion = async ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) => {
   const { data } = await api.patch(`/0/goals/${goalId}`, { is_completed });
   return data;
