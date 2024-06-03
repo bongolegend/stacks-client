@@ -10,6 +10,11 @@ export const createUser = async (user: { email: string; username: string }) => {
   return data;
 };
 
+export const loginUser = async (username: string) => {
+  const { data } = await api.get(`/0/users?username=${username}`);
+  return data;
+};
+
 export const createGoal = async (goal: { user_id: string; description: string; is_completed: boolean }) => {
   const { data } = await api.post('/0/goals', goal);
   return data;
