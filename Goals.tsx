@@ -92,6 +92,7 @@ const Goals: React.FC = () => {
       />
       <View style={styles.taskTextContainer}>
         <Text style={styles.taskDescription}>{item.description}</Text>
+        <Text style={styles.taskDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
       </View>
     </View>
   );
@@ -104,15 +105,17 @@ const Goals: React.FC = () => {
           onPress={() => handleOpenModal('goal', item)}
         />
         <View style={styles.goalTextContainer}>
-          <Text style={styles.goalDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
           <Text style={styles.goalDescription}>{item.description}</Text>
+          <Text style={styles.goalDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
         </View>
       </View>
+      <View style={styles.separator} />
       <FlatList
         data={tasks?.filter(task => task.goal_id === item.id)}
         renderItem={renderTaskItem}
         keyExtractor={(task) => task.id}
         nestedScrollEnabled={true}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>
   );
@@ -126,6 +129,7 @@ const Goals: React.FC = () => {
           data={goals}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       )}
       {selectedItem && (
@@ -198,6 +202,11 @@ const styles = StyleSheet.create({
     color: 'gray',
     textAlign: 'right',
   },
+  taskDate: {
+    fontSize: 12,
+    color: 'gray',
+    textAlign: 'right',
+  },
   completeButton: {
     width: 30,
     height: 30,
@@ -219,6 +228,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 8,
   },
   modalOverlay: {
     flex: 1,
