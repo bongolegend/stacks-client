@@ -1,4 +1,3 @@
-// Login.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
@@ -44,15 +43,15 @@ const Login: React.FC = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
       />
       <Button title="Login" onPress={handleLoginUser} />
       <Button title="Create Account" onPress={handleCreateUser} />
