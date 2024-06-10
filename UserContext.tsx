@@ -1,3 +1,4 @@
+// UserContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { saveUser, getUser, removeUser } from './storage';
 
@@ -13,6 +14,7 @@ interface User {
 interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
+  isLoading: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -27,6 +29,7 @@ export const useUser = () => {
 
 export const UserProvider: React.FC = ({ children }) => {
   const [user, setUserState] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -34,6 +37,7 @@ export const UserProvider: React.FC = ({ children }) => {
       if (storedUser) {
         setUserState(storedUser);
       }
+      setIsLoading(false);
     };
 
     loadUser();
@@ -49,7 +53,7 @@ export const UserProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isLoading }}>
       {children}
     </UserContext.Provider>
   );

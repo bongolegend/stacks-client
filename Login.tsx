@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// Login.tsx
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
@@ -13,7 +14,13 @@ const Login: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
-  const { setUser } = useUser();
+  const { user, setUser, isLoading } = useUser();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      navigation.navigate('InApp');
+    }
+  }, [user, isLoading, navigation]);
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
@@ -41,24 +48,30 @@ const Login: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <Button title="Login" onPress={handleLoginUser} />
-      <Button title="Create Account" onPress={handleCreateUser} />
-      {createUserMutation.isLoading && <Text>Loading...</Text>}
-      {createUserMutation.isError && <Text>Error creating user</Text>}
-      {loginUserMutation.isLoading && <Text>Loading...</Text>}
-      {loginUserMutation.isError && <Text>Error logging in</Text>}
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <Button title="Login" onPress={handleLoginUser} />
+          <Button title="Create Account" onPress={handleCreateUser} />
+          {createUserMutation.isLoading && <Text>Loading...</Text>}
+          {createUserMutation.isError && <Text>Error creating user</Text>}
+          {loginUserMutation.isLoading && <Text>Loading...</Text>}
+          {loginUserMutation.isError && <Text>Error logging in</Text>}
+        </>
+      )}
     </View>
   );
 };
