@@ -86,10 +86,10 @@ const Goals: React.FC = () => {
 
   const renderTaskItem = ({ item }: { item: Task }) => (
     <View style={styles.taskItem}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.taskCompleteButton, item.is_completed && styles.completedButton]}
         onPress={() => handleOpenModal('task', item)}
-      />
+      /> */}
       <View style={styles.taskTextContainer}>
         <Text style={styles.taskDescription}>{item.description}</Text>
         <Text style={styles.taskDate}>{new Date(item.created_at).toLocaleDateString()}</Text>

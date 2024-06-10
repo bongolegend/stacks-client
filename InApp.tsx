@@ -35,7 +35,7 @@ const InApp: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Tab.Navigator>
+      <Tab.Navigator screenOptions={{ headerShown: false }} >
         <Tab.Screen name="Timeline" component={Timeline} />
         <Tab.Screen name="Goals" component={Goals} />
         <Tab.Screen name="Search" component={Search} />
@@ -53,7 +53,7 @@ const InApp: React.FC<Props> = ({ route, navigation }) => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <View style={styles.buttonContainer}>
-                <Text style={styles.buttonCaption}>Task</Text>
+                <Text style={styles.buttonCaption}>Milestone</Text>
                 <TouchableOpacity style={[styles.modalButton, styles.taskButton]} onPress={handleCreateTask}>
                   <Text style={[styles.modalButtonText, styles.taskButtonText]}>+</Text>
                 </TouchableOpacity>

@@ -27,7 +27,7 @@ const CreateTask: React.FC = () => {
     mutationFn: createTask,
     onSuccess: () => {
       queryClient.invalidateQueries(['tasks']);
-      showNotification('Task Posted');
+      showNotification('Milestone Posted');
       navigation.goBack();
     },
   });
@@ -95,7 +95,7 @@ const CreateTask: React.FC = () => {
         <TextInput
           ref={textInputRef}
           style={styles.textInput}
-          placeholder="Enter your task..."
+          placeholder="Enter your milestone..."
           multiline
           value={description}
           onChangeText={setDescription}

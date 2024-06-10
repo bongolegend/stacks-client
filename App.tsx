@@ -20,9 +20,9 @@ const App: React.FC = () => {
       <NotificationProvider>
         <UserProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
+            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }} >
               <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="InApp" component={InApp} options={{ headerShown: false }} />
+              <Stack.Screen name="InApp" component={InApp} />
               <Stack.Screen name="CreateGoal" component={CreateGoal} />
               <Stack.Screen name="CreateTask" component={CreateTask} />
             </Stack.Navigator>
