@@ -12,7 +12,7 @@ export const createUser = async (user: { email: string; username: string }) => {
 
 export const loginUser = async (username: string) => {
   const { data } = await api.get(`/0/users?username=${username}`);
-  return data;
+  return data[0];
 };
 
 export const createGoal = async (goal: { user_id: string; description: string; is_completed: boolean }) => {
@@ -37,6 +37,21 @@ export const fetchTasks = async (user_id: string) => {
 
 export const fetchTimeline = async (user_id: string) => {
   const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
+  return data;
+};
+
+export const fetchUsers = async (user_id: string) => {
+  const { data } = await api.get(`/0/users/${user_id}/search`);
+  return data;
+};
+
+export const followUser = async (follower_id: string, leader_id: string) => {
+  const { data } = await api.post('/0/follows', { follower_id, leader_id });
+  return data;
+};
+
+export const unfollowUser = async (follower_id: string, leader_id: string) => {
+  const { data } = await api.delete(`/0/follows/${follower_id}/leaders/${leader_id}`);
   return data;
 };
 

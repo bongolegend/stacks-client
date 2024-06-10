@@ -7,6 +7,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './types';
 import Timeline from './Timeline';
 import Goals from './Goals';
+import Search from './Search';
 
 type InAppScreenRouteProp = RouteProp<RootStackParamList, 'InApp'>;
 type InAppScreenNavigationProp = StackNavigationProp<RootStackParamList, 'InApp'>;
@@ -37,6 +38,7 @@ const InApp: React.FC<Props> = ({ route, navigation }) => {
       <Tab.Navigator>
         <Tab.Screen name="Timeline" component={Timeline} />
         <Tab.Screen name="Goals" component={Goals} />
+        <Tab.Screen name="Search" component={Search} />
       </Tab.Navigator>
       <TouchableOpacity style={[styles.fab]} onPress={() => setModalVisible(true)}>
         <Text style={styles.fabText}>+</Text>
