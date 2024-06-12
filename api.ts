@@ -1,8 +1,9 @@
 // api.ts
 import axios from 'axios';
+import config from './config';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: config.stacksAPI,
 });
 
 export const createUser = async (user: { email: string; username: string }) => {
