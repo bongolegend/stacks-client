@@ -2,9 +2,9 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import RootNavigator from './RootNavigator';
-import AppProviders from './AppProviders';
-import useInitialization from './useInitialization';
+import RootNavigator from './navigation/RootNavigator';
+import AppProviders from './contexts/AppProviders';
+import useInitialization from './utils/useInitialization';
 
 const queryClient = new QueryClient();
 

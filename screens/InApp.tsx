@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Timeline from './Timeline';
+import Timeline from '../Timeline';
 import Goals from './Goals';
 import Search from './Search';
-import ContentCreationButtonsModal from './ContentCreationButtonsModal';
+import ContentCreationButtonsModal from '../components/ContentCreationButtonsModal';
 
 const Tab = createBottomTabNavigator();
 

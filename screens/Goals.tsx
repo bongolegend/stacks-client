@@ -3,8 +3,8 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from 'react
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchGoals, fetchMilestones, updateGoalCompletion } from './api';
 import { useUser } from './UserContext';
-import GoalItem from './GoalItem';
-import CompletionModal from './CompletionModal';
+import GoalItem from './components/GoalItem';
+import CompletionModal from './components/CompletionModal';
 
 interface Goal {
   id: string;

@@ -1,6 +1,6 @@
 // UserContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { saveUser, getUser, removeUser } from './storage';
+import { saveUser, getUser, removeUser } from '../services/storage';
 
 interface User {
   email: string;

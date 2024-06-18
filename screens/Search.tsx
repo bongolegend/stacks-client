@@ -2,8 +2,8 @@
 import React from 'react';
 import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchUsers, followUser, unfollowUser } from './api';
-import { useUser } from './UserContext';
+import { fetchUsers, followUser, unfollowUser } from '../api';
+import { useUser } from '../contexts/UserContext';
 
 interface UserEnriched {
   email: string;

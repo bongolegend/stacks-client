@@ -1,8 +1,8 @@
 // useMutationHandlers.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
-import { useNotification } from './NotificationContext';
-import { useUser } from './UserContext';
+import { useNotification } from '../contexts/NotificationContext';
+import { useUser } from '../contexts/UserContext';
 
 const useMutationHandlers = (mutationFn: any, queryKey: string, successMessage: string) => {
   const queryClient = useQueryClient();

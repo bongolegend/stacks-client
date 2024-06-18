@@ -4,7 +4,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTimeline } from './api';
 import { useUser } from './UserContext';
-import Post from './Post';
+import Post from './components/Post';
 
 const Timeline: React.FC = () => {
   const { user } = useUser();

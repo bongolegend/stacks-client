@@ -3,7 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Login';
-import InApp from './InApp';
+import InApp from '../screens/InApp';
 import CreateGoal from './CreateGoal';
 import CreateMilestone from './CreateMilestone';
 import { RootStackParamList } from './types';
