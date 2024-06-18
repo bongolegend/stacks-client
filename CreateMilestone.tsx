@@ -1,14 +1,16 @@
-// CreateGoal.tsx
+// CreateMilestone.tsx
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import SharedForm from './SharedForm';
 import useMutationHandlers from './useMutationHandlers';
-import { createGoal } from './api';
+import { createMilestone } from './api';
+import DropdownComponent from './DropdownComponent';
 import { useNavigation } from '@react-navigation/native';
 
-const CreateGoal: React.FC = () => {
+const CreateMilestone: React.FC = () => {
   const [description, setDescription] = useState<string>('');
-  const handlePost = useMutationHandlers(createGoal, 'goals', 'Goal Posted');
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+  const handlePost = useMutationHandlers(createMilestone, 'milestones', 'Milestone Posted');
   const navigation = useNavigation();
 
   return (
@@ -20,18 +22,19 @@ const CreateGoal: React.FC = () => {
       <View style={styles.innerContainer}>
         <SharedForm
           title="Post"
-          placeholder="Enter your goal..."
+          placeholder="Enter your milestone..."
           value={description}
           setValue={setDescription}
-          onPost={() => handlePost({ description, is_completed: false })}
+          onPost={() => handlePost({ goal_id: selectedGoal, description, is_completed: false })}
           navigation={navigation}
         />
+        <DropdownComponent selectedGoal={selectedGoal} setSelectedGoal={setSelectedGoal} />
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default CreateGoal;
+export default CreateMilestone;
 
 const styles = StyleSheet.create({
   container: {

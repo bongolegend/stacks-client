@@ -11,9 +11,9 @@ const ContentCreationButtonsModal: React.FC<{ modalVisible: boolean, setModalVis
     navigation.navigate('CreateGoal');
   };
 
-  const handleCreateTask = () => {
+  const handleCreateMilestone = () => {
     setModalVisible(false);
-    navigation.navigate('CreateTask');
+    navigation.navigate('CreateMilestone');
   };
 
   return (
@@ -28,7 +28,7 @@ const ContentCreationButtonsModal: React.FC<{ modalVisible: boolean, setModalVis
           <View style={styles.modalContent}>
             <View style={styles.buttonContainer}>
               <Text style={styles.buttonCaption}>Milestone</Text>
-              <TouchableOpacity style={[styles.modalButton, styles.taskButton]} onPress={handleCreateTask}>
+              <TouchableOpacity style={[styles.modalButton, styles.taskButton]} onPress={handleCreateMilestone}>
                 <Text style={[styles.modalButtonText, styles.taskButtonText]}>+</Text>
               </TouchableOpacity>
             </View>

@@ -21,7 +21,7 @@ export const createGoal = async (goal: { user_id: string; description: string; i
   return data;
 };
 
-export const createTask = async (task: { user_id: string; goal_id: string; description: string; is_completed: boolean }) => {
+export const createMilestone = async (task: { user_id: string; goal_id: string; description: string; is_completed: boolean }) => {
   const { data } = await api.post('/0/tasks', task);
   return data;
 };

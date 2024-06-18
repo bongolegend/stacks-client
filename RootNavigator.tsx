@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Login';
 import InApp from './InApp';
 import CreateGoal from './CreateGoal';
-import CreateTask from './CreateTask';
+import CreateMilestone from './CreateMilestone';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -19,7 +19,7 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="InApp" component={InApp} />
       <Stack.Screen name="CreateGoal" component={CreateGoal} />
-      <Stack.Screen name="CreateTask" component={CreateTask} />
+      <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
     </Stack.Navigator>
   </NavigationContainer>
 );
