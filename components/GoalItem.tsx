@@ -28,8 +28,8 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
   const renderMilestoneItem = ({ item }: { item: Milestone }) => (
     <View style={styles.milestoneItem}>
       <View style={styles.milestoneTextContainer}>
-        <Text style={styles.milestoneDescription}>{item.description}</Text>
-        <Text style={styles.milestoneDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
+        <Text style={[styles.milestoneDescription, , goal.is_completed && styles.completedText]}>{item.description}</Text>
+        <Text style={[styles.milestoneDate, goal.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
       </View>
     </View>
   );
@@ -42,8 +42,8 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
           onPress={() => onOpenModal(goal)}
         />
         <View style={styles.goalTextContainer}>
-          <Text style={styles.goalDescription}>{goal.description}</Text>
-          <Text style={styles.goalDate}>{new Date(goal.created_at).toLocaleDateString()}</Text>
+          <Text style={[styles.goalDescription, goal.is_completed && styles.completedText]}>{goal.description}</Text>
+          <Text style={[styles.goalDate, goal.is_completed && styles.completedText]}>{new Date(goal.created_at).toLocaleDateString()}</Text>
         </View>
       </View>
       <View style={styles.separator} />
@@ -100,15 +100,22 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   completeButton: {
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ccc',
-    borderRadius: 15,
+    backgroundColor: '#e0e0e0', // Darker gray background
+    borderColor: 'gray',
+    borderWidth: 2,
+    borderRadius: 5, // Rounded edges
   },
   completedButton: {
-    backgroundColor: '#B0E57C',
+    backgroundColor: '#8FBC8F', // Darker green background
+    borderColor: '#006400',
+    borderRadius: 5, // Rounded edges
+  },
+  completedText: {
+    color: 'darkgray', // Dark gray color for completed text
   },
   separator: {
     height: 1,
