@@ -1,9 +1,9 @@
 // AppProviders.tsx
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { UserProvider } from './UserContext';
 import { NotificationProvider } from './NotificationContext';
 
-const AppProviders: React.FC<{ initialState?: any }> = ({ children, initialState }) => (
+const AppProviders: React.FC<{ children: ReactNode }> = ({ children }) => (
   <NotificationProvider>
     <UserProvider>
       {children}

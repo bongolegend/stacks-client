@@ -7,18 +7,15 @@ import InApp from './InApp';
 import CreateGoal from './CreateGoal';
 import CreateTask from './CreateTask';
 import { RootStackParamList } from './types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const RootNavigator: React.FC<{ initialState?: any }> = ({ initialState }) => (
+const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any) => void }> = ({ initialState, onStateChange }) => (
   <NavigationContainer
     initialState={initialState}
-    onStateChange={(state) =>
-      AsyncStorage.setItem('NAVIGATION_STATE', JSON.stringify(state))
-    }
+    onStateChange={onStateChange}
   >
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="InApp" component={InApp} />
       <Stack.Screen name="CreateGoal" component={CreateGoal} />

@@ -9,7 +9,7 @@ import useInitialization from './useInitialization';
 const queryClient = new QueryClient();
 
 const App: React.FC = () => {
-  const { isReady, initialState } = useInitialization();
+  const { isReady, initialState, onStateChange } = useInitialization();
 
   if (!isReady) {
     return (
@@ -21,8 +21,8 @@ const App: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppProviders initialState={initialState}>
-        <RootNavigator />
+      <AppProviders>
+        <RootNavigator initialState={initialState} onStateChange={onStateChange} />
       </AppProviders>
     </QueryClientProvider>
   );

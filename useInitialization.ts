@@ -22,12 +22,18 @@ const useInitialization = () => {
       }
     };
 
-    if (!isReady) {
-      restoreState();
-    }
-  }, [isReady]);
+    restoreState();
+  }, []);
 
-  return { isReady, initialState };
+  const onStateChange = async (state) => {
+    try {
+      await AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return { isReady, initialState, onStateChange };
 };
 
 export default useInitialization;
