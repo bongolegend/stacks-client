@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, fetchMilestones, updateGoalCompletion } from './api';
-import { useUser } from './UserContext';
-import GoalItem from './components/GoalItem';
-import CompletionModal from './components/CompletionModal';
+import { fetchGoals, fetchMilestones, updateGoalCompletion } from '../services/api';
+import { useUser } from '../contexts/UserContext';
+import GoalItem from '../components/GoalItem';
+import CompletionModal from '../components/CompletionModal';
 
 interface Goal {
   id: string;

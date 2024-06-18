@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useQuery } from '@tanstack/react-query';
-import { fetchGoals } from './api';
-import { useUser } from './UserContext';
+import { fetchGoals } from '../services/api';
+import { useUser } from '../contexts/UserContext';
 
 const DropdownComponent: React.FC<{ selectedGoal: string | null, setSelectedGoal: (value: string | null) => void }> = ({ selectedGoal, setSelectedGoal }) => {
   const { user } = useUser();

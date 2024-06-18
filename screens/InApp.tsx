@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Timeline from '../Timeline';
+import Timeline from '../screens/Timeline';
 import Goals from './Goals';
 import Search from './Search';
 import ContentCreationButtonsModal from '../components/ContentCreationButtonsModal';

@@ -2,10 +2,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from './Login';
+import Login from '../screens/Login';
 import InApp from '../screens/InApp';
-import CreateGoal from './CreateGoal';
-import CreateMilestone from './CreateMilestone';
+import CreateGoal from '../screens/CreateGoal';
+import CreateMilestone from '../screens/CreateMilestone';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

@@ -1,9 +1,9 @@
 // CreateGoal.tsx
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import SharedForm from './SharedForm';
-import useMutationHandlers from './useMutationHandlers';
-import { createGoal } from './api';
+import SharedForm from '../components/SharedForm';
+import useMutationHandlers from '../utils/useMutationHandlers';
+import { createGoal } from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 
 const CreateGoal: React.FC = () => {

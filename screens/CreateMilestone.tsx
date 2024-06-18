@@ -1,10 +1,10 @@
 // CreateMilestone.tsx
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import SharedForm from './SharedForm';
-import useMutationHandlers from './useMutationHandlers';
-import { createMilestone } from './api';
-import DropdownComponent from './DropdownComponent';
+import SharedForm from '../components/SharedForm';
+import useMutationHandlers from '../utils/useMutationHandlers';
+import { createMilestone } from '../services/api';
+import DropdownComponent from '../components/DropdownComponent';
 import { useNavigation } from '@react-navigation/native';
 
 const CreateMilestone: React.FC = () => {

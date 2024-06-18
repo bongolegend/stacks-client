@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigation } from '@react-navigation/native';
-import { createUser, loginUser } from './api';
+import { createUser, loginUser } from '../services/api';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from './types';
-import { useUser } from './UserContext';
+import { RootStackParamList } from '../navigation/types';
+import { useUser } from '../contexts/UserContext';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'InApp'>;
 
