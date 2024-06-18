@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchGoals, fetchMilestones, updateGoalCompletion } from '../services/api';
 import { useUser } from '../contexts/UserContext';
@@ -76,7 +76,7 @@ const Goals: React.FC = () => {
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={goals}
+          data={goals?.sort((a, b) => a.is_completed - b.is_completed)}
           renderItem={({ item }) => (
             <GoalItem 
               goal={item} 
