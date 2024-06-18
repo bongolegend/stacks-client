@@ -57,7 +57,7 @@ const App: React.FC = () => {
             initialState={initialState}
             onStateChange={(state) => AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))}
           >
-            <Stack.Navigator>
+            <Stack.Navigator screenOptions={{ headerShown: false }} >
               <Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="InApp" component={InApp} />
               <Stack.Screen name="CreateGoal" component={CreateGoal} />
