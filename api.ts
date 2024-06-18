@@ -31,7 +31,7 @@ export const fetchGoals = async (user_id: string) => {
   return data;
 };
 
-export const fetchTasks = async (user_id: string) => {
+export const fetchMilestones = async (user_id: string) => {
   const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
   return data;
 };
