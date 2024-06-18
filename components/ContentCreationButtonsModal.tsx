@@ -1,4 +1,3 @@
-// ContentCreationButtonsModal.tsx
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -58,10 +57,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50, // Align modal content with the FAB
     right: 30,
-    alignItems: 'center',
+    alignItems: 'flex-end', // Align items to the right
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Place text and button in a row
     alignItems: 'center',
     marginBottom: 10,
   },
