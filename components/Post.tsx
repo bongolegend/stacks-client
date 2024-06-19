@@ -1,6 +1,9 @@
-// Post.tsx
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addReactionToPost } from '../services/api';
+import { useUser } from '../contexts/UserContext';
 
 interface PostProps {
   item: {
@@ -17,6 +20,7 @@ interface PostProps {
       description: string;
       is_completed: boolean;
       id: string;
+      table: string;
       created_at: string;
       updated_at: string;
     };
@@ -25,6 +29,7 @@ interface PostProps {
       description: string;
       is_completed: boolean;
       id: string;
+      table: string;
       created_at: string;
       updated_at: string;
     };
@@ -33,15 +38,41 @@ interface PostProps {
   };
 }
 
-const Post: React.FC<PostProps> = ({ item }) => (
-  <View style={styles.postItem}>
-    <View style={styles.postHeader}>
-      <Text style={styles.username}>{item.user.username}</Text>
-      <Text style={styles.sortOn}>{new Date(item.sort_on).toLocaleDateString()}</Text>
+const Post: React.FC<PostProps> = ({ item }) => {
+  const { user } = useUser();
+  const queryClient = useQueryClient();
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+
+  const reactionMutation = useMutation({
+    mutationFn: ({ post, emoji }: { post: PostProps['item'], emoji: EmojiType }) => addReactionToPost(user?.id!, post, emoji),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['timeline', user?.id]);
+    },
+  });
+
+  const handleOpenEmojiPicker = () => {
+    setEmojiPickerVisible(true);
+  };
+
+  const handleSelectEmoji = (emoji: EmojiType) => {
+    reactionMutation.mutate({ post: item, emoji });
+    setEmojiPickerVisible(false);
+  };
+
+  return (
+    <View style={styles.postItem}>
+      <View style={styles.postHeader}>
+        <Text style={styles.username}>{item.user.username}</Text>
+        <Text style={styles.sortOn}>{new Date(item.sort_on).toLocaleDateString()}</Text>
+      </View>
+      <Text style={styles.description}>{item.primary.description}</Text>
+      <TouchableOpacity onPress={handleOpenEmojiPicker}>
+        <Text>Add Reaction</Text>
+      </TouchableOpacity>
+      <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />
     </View>
-    <Text style={styles.description}>{item.primary.description}</Text>
-  </View>
-);
+  );
+};
 
 export default Post;
 

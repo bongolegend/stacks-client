@@ -1,6 +1,6 @@
-// api.ts
 import axios from 'axios';
 import config from '../config';
+import { EmojiType } from 'rn-emoji-keyboard';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -63,5 +63,17 @@ export const updateGoalCompletion = async ({ goalId, is_completed }: { goalId: s
 
 export const updateTaskCompletion = async ({ taskId, is_completed }: { taskId: string; is_completed: boolean }) => {
   const { data } = await api.patch(`/0/tasks/${taskId}`, { is_completed });
+  return data;
+};
+
+export const addReactionToPost = async (userId: string, post: any, emoji: EmojiType) => {
+  const reaction = {
+    user_id: userId,
+    goal_id: post.primary.table === 'goals' ? post.primary.id : null,
+    task_id: post.primary.table === 'tasks' ? post.primary.id : null,
+    reaction: emoji,
+    reaction_library: "rn-emoji-keyboard:^1.7.0",
+  };
+  const { data } = await api.post(`/0/reactions`, reaction);
   return data;
 };
