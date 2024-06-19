@@ -4,6 +4,7 @@ import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addReactionToPost } from '../services/api';
 import { useUser } from '../contexts/UserContext';
+import { useNavigation } from '@react-navigation/native';
 
 interface PostProps {
   item: {
@@ -31,6 +32,7 @@ interface PostProps {
       task_id: string;
       goal_id: string;
     }[];
+    comments_count: number;
     sort_on: string;
     created_at: string;
   };
@@ -39,6 +41,7 @@ interface PostProps {
 const Post: React.FC<PostProps> = ({ item }) => {
   const { user } = useUser();
   const queryClient = useQueryClient();
+  const navigation = useNavigation();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const reactionMutation = useMutation({
@@ -59,6 +62,10 @@ const Post: React.FC<PostProps> = ({ item }) => {
 
   const handleAddReaction = (emoji: EmojiType) => {
     reactionMutation.mutate(emoji);
+  };
+
+  const handleOpenComments = () => {
+    navigation.navigate('CommentsScreen', { post: item });
   };
 
   // Group reactions by emoji
@@ -88,6 +95,9 @@ const Post: React.FC<PostProps> = ({ item }) => {
           <Text style={styles.addReactionText}>:-) +</Text>
         </TouchableOpacity>
       </View>
+      <TouchableOpacity onPress={handleOpenComments} style={styles.commentButton}>
+        <Text style={styles.commentButtonText}>Comments ({item.comments_count})</Text>
+      </TouchableOpacity>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />
     </View>
   );
@@ -140,6 +150,19 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   addReactionText: {
+    fontSize: 16,
+    color: 'darkgrey',
+    fontWeight: 'bold',
+  },
+  commentButton: {
+    backgroundColor: '#d3d3d3',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignSelf: 'flex-start', // Ensure the button is only as wide as the content
+    marginTop: 8,
+  },
+  commentButtonText: {
     fontSize: 16,
     color: 'darkgrey',
     fontWeight: 'bold',

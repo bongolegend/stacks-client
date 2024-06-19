@@ -77,3 +77,20 @@ export const addReactionToPost = async (userId: string, post: any, emoji: EmojiT
   const { data } = await api.post(`/0/reactions`, reaction);
   return data;
 };
+
+export const addCommentToPost = async ({ post, userId, comment }: { post: any; userId: string; comment: string }) => {
+  const commentData = {
+    user_id: userId,
+    goal_id: post.primary.table === 'goals' ? post.primary.id : null,
+    task_id: post.primary.table === 'tasks' ? post.primary.id : null,
+    comment,
+  };
+  const { data } = await api.post(`/0/comments`, commentData);
+  return data;
+};
+
+export const fetchCommentsForPost = async (post: any) => {
+  const queryArgs = post.primary.table === 'goals' ? `goal_id=${post.primary.id}` : `task_id=${post.primary.id}`;
+  const { data } = await api.get(`/0/comments?${queryArgs}`);
+  return data;
+};
