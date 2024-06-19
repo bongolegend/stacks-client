@@ -12,7 +12,7 @@ Start the dev server.
 
 ### bundle for web
 Create bundle.
-```npx expo export -p web```
+```npx expo export -p web --output-dir dist.$(date +%Y-%m-%d):$(git rev-parse --short HEAD)```
 
 Run bundle locally.
 ```npx serve dist -l 8081```
