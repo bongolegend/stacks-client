@@ -55,16 +55,18 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.postHeader}>
-        <Text style={styles.username}>{post.user.username}</Text>
+        <View style={styles.postHeaderRow}>
+          <Text style={styles.username}>{post.user.username}</Text>
+          <Text style={styles.timestamp}>{new Date(post.primary.created_at).toLocaleDateString()}</Text>
+        </View>
         <Text style={styles.description}>{post.primary.description}</Text>
-        <Text style={styles.timestamp}>{new Date(post.primary.created_at).toLocaleDateString()}</Text>
       </View>
       <FlatList
         data={comments}
         renderItem={({ item }) => (
           <View style={styles.commentItem}>
             <View style={styles.commentHeader}>
-              <Text style={styles.commentUserId}>{item.user_id}</Text>
+              <Text style={styles.commentUserId}>{item.user.username}</Text>
               <Text style={styles.commentTimestamp}>{new Date(item.created_at).toLocaleDateString()}</Text>
             </View>
             <Text style={styles.commentText}>{item.comment}</Text>
@@ -96,12 +98,16 @@ const styles = StyleSheet.create({
   postHeader: {
     marginBottom: 16,
   },
+  postHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   username: {
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   description: {
-    marginBottom: 4,
+    marginTop: 4,
   },
   timestamp: {
     color: 'grey',
