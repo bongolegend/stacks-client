@@ -24,15 +24,13 @@ interface PostProps {
       created_at: string;
       updated_at: string;
     };
-    secondary: {
+    reactions: {
       user_id: string;
-      description: string;
-      is_completed: boolean;
-      id: string;
-      table: string;
-      created_at: string;
-      updated_at: string;
-    };
+      reaction: EmojiType;
+      reaction_library: string;
+      task_id: string;
+      goal_id: string;
+    }[];
     sort_on: string;
     created_at: string;
   };
@@ -44,7 +42,7 @@ const Post: React.FC<PostProps> = ({ item }) => {
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const reactionMutation = useMutation({
-    mutationFn: ({ post, emoji }: { post: PostProps['item'], emoji: EmojiType }) => addReactionToPost(user?.id!, post, emoji),
+    mutationFn: (emoji: EmojiType) => addReactionToPost(user?.id!, item, emoji),
     onSuccess: () => {
       queryClient.invalidateQueries(['timeline', user?.id]);
     },
@@ -55,9 +53,23 @@ const Post: React.FC<PostProps> = ({ item }) => {
   };
 
   const handleSelectEmoji = (emoji: EmojiType) => {
-    reactionMutation.mutate({ post: item, emoji });
+    reactionMutation.mutate(emoji);
     setEmojiPickerVisible(false);
   };
+
+  const handleAddReaction = (emoji: EmojiType) => {
+    reactionMutation.mutate(emoji);
+  };
+
+  // Group reactions by emoji
+  const groupedReactions = item.reactions.reduce((acc: { [key: string]: number }, reaction) => {
+    const emoji = reaction.reaction.emoji;
+    if (!acc[emoji]) {
+      acc[emoji] = 0;
+    }
+    acc[emoji]++;
+    return acc;
+  }, {});
 
   return (
     <View style={styles.postItem}>
@@ -66,9 +78,16 @@ const Post: React.FC<PostProps> = ({ item }) => {
         <Text style={styles.sortOn}>{new Date(item.sort_on).toLocaleDateString()}</Text>
       </View>
       <Text style={styles.description}>{item.primary.description}</Text>
-      <TouchableOpacity onPress={handleOpenEmojiPicker}>
-        <Text>Add Reaction</Text>
-      </TouchableOpacity>
+      <View style={styles.reactionsContainer}>
+        {Object.entries(groupedReactions).map(([emoji, count]) => (
+          <TouchableOpacity key={emoji} style={styles.reactionButton} onPress={() => handleAddReaction({ emoji } as EmojiType)}>
+            <Text style={styles.reactionText}>{emoji} {count > 1 ? count : ''}</Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity onPress={handleOpenEmojiPicker} style={styles.addReactionButton}>
+          <Text style={styles.addReactionText}>:-) +</Text>
+        </TouchableOpacity>
+      </View>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />
     </View>
   );
@@ -95,5 +114,34 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 4,
+    marginBottom: 8,
+  },
+  reactionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center', // Align items vertically in the center
+  },
+  reactionButton: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 4,
+    marginBottom: 4,
+  },
+  reactionText: {
+    fontSize: 16,
+  },
+  addReactionButton: {
+    backgroundColor: '#d3d3d3',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginLeft: 4,
+  },
+  addReactionText: {
+    fontSize: 16,
+    color: 'darkgrey',
+    fontWeight: 'bold',
   },
 });
