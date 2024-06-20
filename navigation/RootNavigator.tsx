@@ -16,6 +16,7 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
   <NavigationContainer
     initialState={initialState}
     onStateChange={onStateChange}
+    documentTitle={{formatter: () => "getstacks.io"}}
   >
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={Login} />
