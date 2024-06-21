@@ -96,7 +96,7 @@ const Post: React.FC<PostProps> = ({ item }) => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={handleOpenComments} style={styles.commentButton}>
-        <Text style={styles.commentButtonText}>Comments ({item.comments_count})</Text>
+        <Text style={styles.commentButtonText}>{item.comments_count} Comments</Text>
       </TouchableOpacity>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />
     </View>
