@@ -5,12 +5,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Timeline from '../screens/Timeline';
 import Goals from './Goals';
 import Search from './Search';
-import ContentCreationButtonsModal from '../components/ContentCreationButtonsModal';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const InApp: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -19,13 +19,9 @@ const InApp: React.FC = () => {
         <Tab.Screen name="Goals" component={Goals} />
         <Tab.Screen name="Search" component={Search} />
       </Tab.Navigator>
-      <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('CreateGoal')}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
-      <ContentCreationButtonsModal
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
     </View>
   );
 };
