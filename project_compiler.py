@@ -14,7 +14,7 @@ def append_files_to_master(directory, master, subdir=''):
                     master.write("\n\n")  # Add new lines between files for readability
 
 def create_master_file(directory, master_file):
-    specific_folders = ['.', 'components', 'screens', 'navigation', 'utils', 'services', 'contexts']
+    specific_folders = ['.', 'components', 'screens', 'navigation', 'utils', 'services', 'contexts', 'types']
 
     if os.path.exists(master_file):
         os.remove(master_file)
