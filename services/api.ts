@@ -1,6 +1,7 @@
 import axios from 'axios';
 import config from '../config';
 import { EmojiType } from 'rn-emoji-keyboard';
+import { Goal, Milestone } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -26,14 +27,24 @@ export const createMilestone = async (task: { user_id: string; goal_id: string; 
   return data;
 };
 
-export const fetchGoals = async (user_id: string) => {
-  const { data } = await api.get(`/0/goals?user_id=${user_id}`);
-  return data;
+export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
+  try {
+    const { data } = await api.get(`/0/goals?user_id=${user_id}`);
+    const goals = data.map((goal: any) => Goal.parse(goal));
+    return goals;
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+  }
 };
 
 export const fetchMilestones = async (user_id: string) => {
-  const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
-  return data;
+  try {
+    const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
+    const milestones = data.map((milestone: any) => Milestone.parse(milestone));
+    return milestones;
+  } catch (error) {
+    console.error('Error fetching milestones:', error);
+}
 };
 
 export const fetchTimeline = async (user_id: string) => {
@@ -56,13 +67,13 @@ export const unfollowUser = async (follower_id: string, leader_id: string) => {
   return data;
 };
 
-export const updateGoalCompletion = async ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) => {
-  const { data } = await api.patch(`/0/goals/${goalId}`, { is_completed });
+export const updateGoalCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }) => {
+  const { data } = await api.patch(`/0/goals/${id}`, { is_completed });
   return data;
 };
 
-export const updateTaskCompletion = async ({ taskId, is_completed }: { taskId: string; is_completed: boolean }) => {
-  const { data } = await api.patch(`/0/tasks/${taskId}`, { is_completed });
+export const updateTaskCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }) => {
+  const { data } = await api.patch(`/0/tasks/${id}`, { is_completed });
   return data;
 };
 

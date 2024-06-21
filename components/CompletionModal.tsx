@@ -1,17 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { Goal, Milestone } from '../types/requests';
 
-interface Goal {
-  id: string;
-  user_id: string;
-  description: string;
-  is_completed: boolean;
-  created_at: string;
-}
 
 interface CompletionModalProps {
   visible: boolean;
-  item: { type: 'goal'; item: Goal };
+  item: Goal | Milestone;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -27,9 +21,9 @@ const CompletionModal: React.FC<CompletionModalProps> = ({ visible, item, onClos
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalText}>
-            {item.item.is_completed
-              ? `Are you sure you want to un-mark this goal as complete?`
-              : `Are you sure you want to mark this goal as complete?`}
+            {item.is_completed
+              ? `Un-mark as complete?`
+              : `This will post to the timeline. Continue?`}
           </Text>
           <View style={styles.modalButtons}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>

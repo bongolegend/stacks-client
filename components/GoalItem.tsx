@@ -1,35 +1,25 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Goal, Milestone } from '../types/requests';
 
-interface Goal {
-  id: string;
-  user_id: string;
-  description: string;
-  is_completed: boolean;
-  created_at: string;
-}
-
-interface Milestone {
-  id: string;
-  user_id: string;
-  goal_id: string;
-  description: string;
-  is_completed: boolean;
-  created_at: string;
-}
 
 interface GoalItemProps {
   goal: Goal;
   milestones: Milestone[];
-  onOpenModal: (item: Goal) => void;
+  onOpenModal: (item: Goal | Milestone) => void;
+  // onMilestoneToggle: (milestone: Milestone) => void;
 }
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
   const renderMilestoneItem = ({ item }: { item: Milestone }) => (
     <View style={styles.milestoneItem}>
+      <TouchableOpacity
+        style={[styles.completeButton, item.is_completed && styles.completedButton]}
+        onPress={() => onOpenModal(item)}
+      />
       <View style={styles.milestoneTextContainer}>
-        <Text style={[styles.milestoneDescription, , goal.is_completed && styles.completedText]}>{item.description}</Text>
-        <Text style={[styles.milestoneDate, goal.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
+        <Text style={[styles.milestoneDescription, item.is_completed && styles.completedText]}>{item.description}</Text>
+        <Text style={[styles.milestoneDate, item.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
       </View>
     </View>
   );
@@ -42,8 +32,13 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
           onPress={() => onOpenModal(goal)}
         />
         <View style={styles.goalTextContainer}>
+          <Text style={[styles.goalTitle, goal.is_completed && styles.completedText]}>{goal.title}</Text>
+          {goal.due_date && (
+            <Text style={styles.dueDate}>
+              Due date: <Text style={styles.dueDateText}>{new Date(goal.due_date).toLocaleDateString()}</Text>
+            </Text>
+          )}
           <Text style={[styles.goalDescription, goal.is_completed && styles.completedText]}>{goal.description}</Text>
-          <Text style={[styles.goalDate, goal.is_completed && styles.completedText]}>{new Date(goal.created_at).toLocaleDateString()}</Text>
         </View>
       </View>
       <View style={styles.separator} />
@@ -82,17 +77,23 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
+  goalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  dueDate: {
+    fontSize: 12,
+    color: 'darkgray',
+    marginBottom: 4,
+  },
+  dueDateText: {
+    color: 'darkgray',
+  },
   goalDescription: {
     fontSize: 16,
-    fontWeight: 'bold',
   },
   milestoneDescription: {
     fontSize: 14,
-  },
-  goalDate: {
-    fontSize: 12,
-    color: 'gray',
-    textAlign: 'right',
   },
   milestoneDate: {
     fontSize: 12,

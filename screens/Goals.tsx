@@ -1,32 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, fetchMilestones, updateGoalCompletion } from '../services/api';
+import { fetchGoals, fetchMilestones, updateGoalCompletion, updateTaskCompletion } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
 import CompletionModal from '../components/CompletionModal';
+import { Goal, Milestone } from '../types/requests';
+import { BRAND } from 'zod';
 
-interface Goal {
-  id: string;
-  user_id: string;
-  description: string;
-  is_completed: boolean;
-  created_at: string;
-}
-
-interface Milestone {
-  id: string;
-  user_id: string;
-  goal_id: string;
-  description: string;
-  is_completed: boolean;
-  created_at: string;
-}
 
 const Goals: React.FC = () => {
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const [selectedItem, setSelectedItem] = useState<{ type: 'goal'; item: Goal } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Goal | Milestone | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const { data: goals, isLoading: goalsLoading } = useQuery({
@@ -42,15 +28,21 @@ const Goals: React.FC = () => {
   });
 
   const goalMutation = useMutation({
-    mutationFn: ({ goalId, is_completed }: { goalId: string; is_completed: boolean }) =>
-      updateGoalCompletion({ goalId, is_completed }),
+    mutationFn: updateGoalCompletion,
     onSuccess: () => {
       queryClient.invalidateQueries(['goals', user?.id]);
     },
   });
 
-  const handleOpenModal = (item: Goal) => {
-    setSelectedItem({ type: 'goal', item });
+  const milestoneMutation = useMutation({
+    mutationFn: updateTaskCompletion,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['milestones', user?.id]);
+    },
+  });
+
+  const handleOpenModal = (item: Goal | Milestone) => {
+    setSelectedItem(item);
     setModalVisible(true);
   };
 
@@ -61,13 +53,20 @@ const Goals: React.FC = () => {
 
   const handleToggleCompletion = () => {
     if (selectedItem) {
-      const { item } = selectedItem;
-      goalMutation.mutate({
-        goalId: item.id,
-        is_completed: !item.is_completed,
+      const mutationFn = Goal.safeParse(selectedItem).success ? goalMutation : milestoneMutation;
+      mutationFn.mutate({
+        id: selectedItem.id,
+        is_completed: !selectedItem.is_completed,
       });
       handleCloseModal();
     }
+  };
+
+  const handleMilestoneToggle = (milestone: Milestone) => {
+    milestoneMutation.mutate({
+      taskId: milestone.id,
+      is_completed: !milestone.is_completed,
+    });
   };
 
   return (
@@ -82,6 +81,7 @@ const Goals: React.FC = () => {
               goal={item} 
               milestones={milestones?.filter(milestone => milestone.goal_id === item.id)} 
               onOpenModal={handleOpenModal} 
+              onMilestoneToggle={handleMilestoneToggle}
             />
           )}
           keyExtractor={(item) => item.id}
