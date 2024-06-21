@@ -1,7 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { EmojiType } from 'rn-emoji-keyboard';
-import { Goal, Milestone, Post } from '../types/requests';
+import { EmojiType, Goal, Milestone, Post } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -17,7 +16,7 @@ export const loginUser = async (username: string) => {
   return data[0];
 };
 
-export const createGoal = async (goal: { user_id: string; description: string; is_completed: boolean }) => {
+export const createGoal = async (goal: { user_id: string; title?: string; description: string; is_completed: boolean; due_date?: string }) => {
   const { data } = await api.post('/0/goals', goal);
   return data;
 };
@@ -34,31 +33,38 @@ export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
     return goals;
   } catch (error) {
     console.error('Error fetching goals:', error);
+    throw error;
   }
 };
 
-export const fetchMilestones = async (user_id: string) => {
+export const fetchMilestones = async (user_id: string): Promise<Milestone[]> => {
   try {
     const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
     const milestones = data.map((milestone: any) => Milestone.parse(milestone));
     return milestones;
   } catch (error) {
     console.error('Error fetching milestones:', error);
-}
+    throw error;
+  }
 };
 
 export const fetchTimeline = async (user_id: string): Promise<Post[]> => {
-  const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
-  const posts = data.map((result: any) => {
-    console.log('post', result);
-    result = Post.safeParse(result);
-    if (!result.success) {
-      console.error('Error parsing post:', result.error.format());
-    } else {
-      return result.data;
-    }
-  });
-  return posts;
+  try {
+    const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
+    const posts = data.map((result: any) => {
+      const parsed = Post.safeParse(result);
+      if (!parsed.success) {
+        console.error('Error parsing post:', parsed.error.format());
+        return null;
+      } else {
+        return parsed.data;
+      }
+    }).filter((post: Post | null): post is Post => post !== null);
+    return posts;
+  } catch (error) {
+    console.error('Error fetching timeline:', error);
+    throw error;
+  }
 };
 
 export const fetchUsers = async (user_id: string) => {
@@ -86,11 +92,11 @@ export const updateTaskCompletion = async ({ id, is_completed }: { id: string; i
   return data;
 };
 
-export const addReactionToPost = async (userId: string, post: any, emoji: EmojiType) => {
+export const addReactionToPost = async (userId: string, post: Post, emoji: EmojiType) => {
   const reaction = {
     user_id: userId,
-    goal_id: post.primary.table === 'goals' ? post.primary.id : null,
-    task_id: post.primary.table === 'tasks' ? post.primary.id : null,
+    goal_id: post.goal ? post.goal.id : null,
+    task_id: post.task ? post.task.id : null,
     reaction: emoji,
     reaction_library: "rn-emoji-keyboard:^1.7.0",
   };
@@ -98,19 +104,16 @@ export const addReactionToPost = async (userId: string, post: any, emoji: EmojiT
   return data;
 };
 
-export const addCommentToPost = async ({ post, userId, comment }: { post: any; userId: string; comment: string }) => {
-  const commentData = {
-    user_id: userId,
-    goal_id: post.primary.table === 'goals' ? post.primary.id : null,
-    task_id: post.primary.table === 'tasks' ? post.primary.id : null,
-    comment,
-  };
+export const addCommentToPost = async ({ post, userId, comment }: { post: Post; userId: string; comment: string }) => {
+  const commentData = post.task 
+    ? { user_id: userId, task_id: post.task.id, comment } 
+    : { user_id: userId, goal_id: post.goal.id, comment };    
   const { data } = await api.post(`/0/comments`, commentData);
   return data;
 };
 
-export const fetchCommentsForPost = async (post: any) => {
-  const queryArgs = post.primary.table === 'goals' ? `goal_id=${post.primary.id}` : `task_id=${post.primary.id}`;
+export const fetchCommentsForPost = async (post: Post) => {
+  const queryArgs = post.task ? `task_id=${post.task.id}` : `goal_id=${post.goal.id}`;
   const { data } = await api.get(`/0/comments?${queryArgs}`);
   return data;
 };

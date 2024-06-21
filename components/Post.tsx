@@ -60,9 +60,9 @@ const Post: React.FC<PostProps> = ({ item }) => {
         <Text style={styles.updatedAt}>{new Date(primary.updated_at).toLocaleDateString()}</Text>
       </View>
       {primary.title && <Text style={styles.primaryTitle}>{primary.title}</Text>}
-      {primary.due_date && <Text style={styles.primaryDueDate}>{new Date(primary.due_date).toLocaleDateString()}</Text>}
+      {primary.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(primary.due_date).toLocaleDateString()}</Text>}
       <Text style={styles.primaryDescription}>{primary.description}</Text>
-      {item.task && <Text style={styles.goalTitle}>{item.goal.title}</Text>}
+      {item.task && <Text style={styles.goalTitle}>Goal: {item.goal.title}</Text>}
       <View style={styles.reactionsContainer}>
         {Object.entries(groupedReactions).map(([emoji, count]) => (
           <TouchableOpacity key={emoji} style={styles.reactionButton} onPress={() => handleAddReaction({ emoji } as EmojiType)}>

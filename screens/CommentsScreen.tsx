@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Button, KeyboardAvoidingView, Platform } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchCommentsForPost, addCommentToPost } from '../services/api';
 import { useUser } from '../contexts/UserContext';
+import { Post as PostType } from '../types/requests';
 
 interface CommentsScreenProps {
   route: {
     params: {
-      post: {
-        id: string;
-        user: {
-          username: string;
-        };
-        primary: {
-          description: string;
-          table: string;
-          id: string;
-          created_at: string;
-        };
-        created_at: string;
-      };
+      post: PostType;
     };
   };
 }
@@ -30,6 +19,8 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState('');
 
+  const primary = post.task || post.goal;
+
   const { data: comments, refetch } = useQuery({
     queryKey: ['postComments', post.id],
     queryFn: () => fetchCommentsForPost(post),
@@ -37,11 +28,12 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   });
 
   const commentMutation = useMutation({
-    mutationFn: (newComment: { post: any; userId: string; comment: string }) =>
+    mutationFn: (newComment: { post: PostType; userId: string; comment: string }) =>
       addCommentToPost(newComment),
     onSuccess: () => {
       refetch();
       setCommentText('');
+      queryClient.invalidateQueries(['timeline', user?.id]);
     },
   });
 
@@ -57,9 +49,12 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
       <View style={styles.postHeader}>
         <View style={styles.postHeaderRow}>
           <Text style={styles.username}>{post.user.username}</Text>
-          <Text style={styles.timestamp}>{new Date(post.primary.created_at).toLocaleDateString()}</Text>
+          <Text style={styles.timestamp}>{new Date(primary.updated_at).toLocaleDateString()}</Text>
         </View>
-        <Text style={styles.description}>{post.primary.description}</Text>
+        {primary.title && <Text style={styles.primaryTitle}>{primary.title}</Text>}
+        {primary.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(primary.due_date).toLocaleDateString()}</Text>}
+        <Text style={styles.description}>{primary.description}</Text>
+        {post.task && <Text style={styles.goalTitle}>Goal: {post.goal.title}</Text>}
       </View>
       <FlatList
         data={comments}
@@ -111,6 +106,19 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     color: 'grey',
+  },
+  primaryTitle: {
+    fontWeight: 'bold',
+    color: 'gray',
+    marginBottom: 4,
+  },
+  primaryDueDate: {
+    color: 'lightgray',
+    marginBottom: 4,
+  },
+  goalTitle: {
+    color: 'gray',
+    marginTop: 8,
   },
   commentsList: {
     flex: 1,
