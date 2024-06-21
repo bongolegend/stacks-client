@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchTimeline } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import Post from '../components/Post';
+import { Post as PostType } from '../types/requests';
 
 const Timeline: React.FC = () => {
   const { user } = useUser();

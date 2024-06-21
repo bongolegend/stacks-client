@@ -5,37 +5,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addReactionToPost } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
+import { Post as PostType } from '../types/requests';
 
 interface PostProps {
-  item: {
-    id: string;
-    user: {
-      email: string;
-      username: string;
-      id: string;
-      created_at: string;
-      updated_at: string;
-    };
-    primary: {
-      user_id: string;
-      description: string;
-      is_completed: boolean;
-      id: string;
-      table: string;
-      created_at: string;
-      updated_at: string;
-    };
-    reactions: {
-      user_id: string;
-      reaction: EmojiType;
-      reaction_library: string;
-      task_id: string;
-      goal_id: string;
-    }[];
-    comments_count: number;
-    sort_on: string;
-    created_at: string;
-  };
+  item: PostType;
 }
 
 const Post: React.FC<PostProps> = ({ item }) => {
@@ -43,6 +16,8 @@ const Post: React.FC<PostProps> = ({ item }) => {
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
+
+  const primary = item.task || item.goal;
 
   const reactionMutation = useMutation({
     mutationFn: (emoji: EmojiType) => addReactionToPost(user?.id!, item, emoji),
@@ -82,9 +57,12 @@ const Post: React.FC<PostProps> = ({ item }) => {
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
         <Text style={styles.username}>{item.user.username}</Text>
-        <Text style={styles.sortOn}>{new Date(item.sort_on).toLocaleDateString()}</Text>
+        <Text style={styles.updatedAt}>{new Date(primary.updated_at).toLocaleDateString()}</Text>
       </View>
-      <Text style={styles.description}>{item.primary.description}</Text>
+      {primary.title && <Text style={styles.primaryTitle}>{primary.title}</Text>}
+      {primary.due_date && <Text style={styles.primaryDueDate}>{new Date(primary.due_date).toLocaleDateString()}</Text>}
+      <Text style={styles.primaryDescription}>{primary.description}</Text>
+      {item.task && <Text style={styles.goalTitle}>{item.goal.title}</Text>}
       <View style={styles.reactionsContainer}>
         {Object.entries(groupedReactions).map(([emoji, count]) => (
           <TouchableOpacity key={emoji} style={styles.reactionButton} onPress={() => handleAddReaction({ emoji } as EmojiType)}>
@@ -119,17 +97,30 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: 'bold',
   },
-  sortOn: {
+  updatedAt: {
     color: 'grey',
   },
-  description: {
+  primaryTitle: {
+    fontWeight: 'bold',
+    color: 'gray',
+    marginBottom: 4,
+  },
+  primaryDueDate: {
+    color: 'lightgray',
+    marginBottom: 4,
+  },
+  primaryDescription: {
     marginTop: 4,
     marginBottom: 8,
+  },
+  goalTitle: {
+    color: 'gray',
+    marginTop: 8,
   },
   reactionsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center', // Align items vertically in the center
+    alignItems: 'center',
   },
   reactionButton: {
     backgroundColor: '#f0f0f0',
@@ -159,7 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    alignSelf: 'flex-start', // Ensure the button is only as wide as the content
+    alignSelf: 'flex-start',
     marginTop: 8,
   },
   commentButtonText: {

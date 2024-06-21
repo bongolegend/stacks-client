@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../config';
 import { EmojiType } from 'rn-emoji-keyboard';
-import { Goal, Milestone } from '../types/requests';
+import { Goal, Milestone, Post } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -47,9 +47,18 @@ export const fetchMilestones = async (user_id: string) => {
 }
 };
 
-export const fetchTimeline = async (user_id: string) => {
+export const fetchTimeline = async (user_id: string): Promise<Post[]> => {
   const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
-  return data;
+  const posts = data.map((result: any) => {
+    console.log('post', result);
+    result = Post.safeParse(result);
+    if (!result.success) {
+      console.error('Error parsing post:', result.error.format());
+    } else {
+      return result.data;
+    }
+  });
+  return posts;
 };
 
 export const fetchUsers = async (user_id: string) => {
