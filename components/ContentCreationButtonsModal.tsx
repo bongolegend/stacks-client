@@ -10,11 +10,6 @@ const ContentCreationButtonsModal: React.FC<{ modalVisible: boolean, setModalVis
     navigation.navigate('CreateGoal');
   };
 
-  const handleCreateMilestone = () => {
-    setModalVisible(false);
-    navigation.navigate('CreateMilestone');
-  };
-
   return (
     <Modal
       transparent={true}
@@ -25,12 +20,6 @@ const ContentCreationButtonsModal: React.FC<{ modalVisible: boolean, setModalVis
       <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <View style={styles.buttonContainer}>
-              <Text style={styles.buttonCaption}>Milestone</Text>
-              <TouchableOpacity style={[styles.modalButton, styles.taskButton]} onPress={handleCreateMilestone}>
-                <Text style={[styles.modalButtonText, styles.taskButtonText]}>+</Text>
-              </TouchableOpacity>
-            </View>
             <View style={styles.buttonContainer}>
               <Text style={styles.buttonCaption}>Goal</Text>
               <TouchableOpacity style={styles.modalButton} onPress={handleCreateGoal}>

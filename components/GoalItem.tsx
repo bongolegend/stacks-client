@@ -1,16 +1,18 @@
+// Filename: components/GoalItem.tsx
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Goal, Milestone } from '../types/requests';
-
+import { useNavigation } from '@react-navigation/native';
 
 interface GoalItemProps {
   goal: Goal;
   milestones: Milestone[];
   onOpenModal: (item: Goal | Milestone) => void;
-  // onMilestoneToggle: (milestone: Milestone) => void;
 }
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
+  const navigation = useNavigation();
+
   const renderMilestoneItem = ({ item }: { item: Milestone }) => (
     <View style={styles.milestoneItem}>
       <TouchableOpacity
@@ -23,6 +25,10 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
       </View>
     </View>
   );
+
+  const handleCreateMilestone = () => {
+    navigation.navigate('CreateMilestone', { goalId: goal.id });
+  };
 
   return (
     <View style={styles.goalItem}>
@@ -49,6 +55,9 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
         nestedScrollEnabled={true}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
+      <TouchableOpacity style={styles.createMilestoneButton} onPress={handleCreateMilestone}>
+        <Text style={styles.createMilestoneButtonText}>+ Milestone</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -105,22 +114,36 @@ const styles = StyleSheet.create({
     height: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#e0e0e0', // Darker gray background
+    backgroundColor: '#e0e0e0',
     borderColor: 'gray',
     borderWidth: 2,
-    borderRadius: 5, // Rounded edges
+    borderRadius: 5,
   },
   completedButton: {
-    backgroundColor: '#8FBC8F', // Darker green background
+    backgroundColor: '#8FBC8F',
     borderColor: '#006400',
-    borderRadius: 5, // Rounded edges
+    borderRadius: 5,
   },
   completedText: {
-    color: 'darkgray', // Dark gray color for completed text
+    color: 'darkgray',
   },
   separator: {
     height: 1,
     backgroundColor: '#ccc',
     marginVertical: 8,
+  },
+  createMilestoneButton: {
+    backgroundColor: '#d3d3d3',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    marginLeft: 32, // Align with milestone complete buttons
+  },
+  createMilestoneButtonText: {
+    fontSize: 16,
+    color: 'darkgrey',
+    fontWeight: 'bold',
   },
 });
