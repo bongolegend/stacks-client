@@ -54,7 +54,7 @@ export type EmojiType = z.infer<typeof EmojiType>;
 export const Reaction = z.object({
   id: z.string(),
   user_id: z.string(),
-  reaction: EmojiType,
+  reaction: z.record(z.any()),
   reaction_library: z.string(),
   task_id: z.union([z.string(), z.null()]),
   goal_id: z.union([z.string(), z.null()]),
