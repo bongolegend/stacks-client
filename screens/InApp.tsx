@@ -6,6 +6,7 @@ import Timeline from '../screens/Timeline';
 import Goals from './Goals';
 import Search from './Search';
 import { useNavigation } from '@react-navigation/native';
+import HeaderBar from '../components/HeaderBar';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +15,7 @@ const InApp: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <HeaderBar />
       <Tab.Navigator screenOptions={{ headerShown: false }}>
         <Tab.Screen name="Timeline" component={Timeline} />
         <Tab.Screen name="Goals" component={Goals} />
