@@ -1,13 +1,26 @@
 // HeaderBar.tsx
-import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import Drawer from './Drawer';
 
 const HeaderBar: React.FC = () => {
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.avatarPlaceholder}></View>
-      <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
-    </View>
+    <>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => setDrawerVisible(true)} style={styles.avatarPlaceholder}></TouchableOpacity>
+        <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
+      </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={drawerVisible}
+        onRequestClose={() => setDrawerVisible(false)}
+      >
+        <Drawer closeDrawer={() => setDrawerVisible(false)} />
+      </Modal>
+    </>
   );
 };
 

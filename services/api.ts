@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { EmojiType, Goal, Milestone, Post } from '../types/requests';
+import { User, EmojiType, Goal, Milestone, Post } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -115,5 +115,20 @@ export const addCommentToPost = async ({ post, userId, comment }: { post: Post; 
 export const fetchCommentsForPost = async (post: Post) => {
   const queryArgs = post.task ? `task_id=${post.task.id}` : `goal_id=${post.goal.id}`;
   const { data } = await api.get(`/0/comments?${queryArgs}`);
+  return data;
+};
+
+export const fetchFollowers = async (user_id: string): Promise<User[]> => {
+  const { data } = await api.get(`/0/users/followers/${user_id}`);
+  return data.map((user: any) => User.parse(user));
+};
+
+export const fetchLeaders = async (user_id: string): Promise<User[]> => {
+  const { data } = await api.get(`/0/users/leaders/${user_id}`);
+  return data.map((user: any) => User.parse(user));
+};
+
+export const fetchFollowCounts = async (user_id: string): Promise<{ followers: number; leaders: number }> => {
+  const { data } = await api.get(`/0/follows/counts/${user_id}`);
   return data;
 };
