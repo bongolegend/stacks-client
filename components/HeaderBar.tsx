@@ -1,20 +1,20 @@
-// HeaderBar.tsx
-import React, { useState } from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import React from 'react';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const HeaderBar: React.FC = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.headerContainer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.avatarPlaceholder}></TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.avatarIcon}>
+        <FontAwesome5 name="user-circle" size={30} color="darkgrey" />
+      </TouchableOpacity>
       <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
     </View>
   );
 };
-
-export default HeaderBar;
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -27,13 +27,9 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     paddingHorizontal: 16,
   },
-  avatarPlaceholder: {
+  avatarIcon: {
     position: 'absolute',
     left: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'gray',
   },
   logo: {
     width: 120,
@@ -41,3 +37,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
+
+export default HeaderBar;

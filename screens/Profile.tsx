@@ -7,6 +7,7 @@ import { fetchFollowCounts } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import SignOutModal from '../components/SignOutModal';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const Profile: React.FC = () => {
   const { user, setUser } = useUser();
@@ -35,7 +36,9 @@ const Profile: React.FC = () => {
       <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.goBack()}>
         <Ionicons name="close" size={24} color="black" />
       </TouchableOpacity>
-      <View style={styles.avatarPlaceholder}></View>
+      <View style={styles.avatarPlaceholder}>
+      <FontAwesome5 name="user-circle" size={80} color="black" />
+      </View>
       <Text style={styles.username}>{user?.username}</Text>
       <Text style={styles.email}>{user?.email}</Text>
       <View style={styles.buttonsContainer}>
@@ -86,11 +89,8 @@ const styles = StyleSheet.create({
     right: 16,
   },
   avatarPlaceholder: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'gray',
     alignSelf: 'center',
+    marginTop: 32,
     marginBottom: 16,
   },
   username: {
