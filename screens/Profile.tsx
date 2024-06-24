@@ -32,7 +32,7 @@ const Profile: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
 
   return (
     <View style={styles.drawerContainer}>
-      <TouchableOpacity style={styles.closeIcon} onPress={closeDrawer}>
+      <TouchableOpacity style={styles.closeIcon} onPress={() => navigation.goBack()}>
         <Ionicons name="close" size={24} color="black" />
       </TouchableOpacity>
       <View style={styles.avatarPlaceholder}></View>
@@ -43,7 +43,6 @@ const Profile: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
           <Button
             title={`${followCounts.followers} Followers`}
             onPress={() => {
-              closeDrawer();
               navigation.navigate('Followers');
             }}
           />
