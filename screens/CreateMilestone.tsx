@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import SharedForm from '../components/SharedForm';
 import useMutationHandlers from '../utils/useMutationHandlers';
-import { createMilestone } from '../services/api';
+import { createSubgoal } from '../services/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const CreateMilestone: React.FC = () => {
+const CreateSubgoal: React.FC = () => {
   const [description, setDescription] = useState<string>('');
-  const handlePost = useMutationHandlers(createMilestone, 'milestones', 'Milestone Posted');
+  const handlePost = useMutationHandlers(createSubgoal, 'subgoals', 'Milestone Posted');
   const navigation = useNavigation();
   const route = useRoute();
   const { goalId } = route.params;
@@ -21,11 +21,11 @@ const CreateMilestone: React.FC = () => {
     >
       <View style={styles.innerContainer}>
         <SharedForm
-          title="Post"
+          title="New Milestone"
           placeholder="Enter your milestone..."
           value={description}
           setValue={setDescription}
-          onPost={() => handlePost({ goal_id: goalId, description, is_completed: false })}
+          onPost={() => handlePost({ parent_id: goalId, description, is_completed: false })}
           navigation={navigation}
         />
       </View>
@@ -33,7 +33,7 @@ const CreateMilestone: React.FC = () => {
   );
 };
 
-export default CreateMilestone;
+export default CreateSubgoal;
 
 const styles = StyleSheet.create({
   container: {

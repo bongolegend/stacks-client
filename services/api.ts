@@ -21,8 +21,13 @@ export const createGoal = async (goal: { user_id: string; title?: string; descri
   return data;
 };
 
-export const createMilestone = async (task: { user_id: string; goal_id: string; description: string; is_completed: boolean }) => {
-  const { data } = await api.post('/0/tasks', task);
+export const createSubgoal = async (subgoal: { user_id: string; parent_id: string; description: string; is_completed: boolean }) => {
+
+  const { data } = await api.post('/0/goals', {
+    user_id: subgoal.user_id, 
+    parent_id: subgoal.parent_id, 
+    description: subgoal.description, 
+    is_completed: subgoal.is_completed});
   return data;
 };
 
@@ -36,6 +41,17 @@ export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
     throw error;
   }
 };
+
+export const fetchSubGoals = async (user_id: string): Promise<Goal[]> => {
+  try {
+    const { data } = await api.get(`/0/goals?user_id=${user_id}`);
+    const goals = data.map((goal: any) => Goal.parse(goal));
+    return goals;
+  } catch (error) {
+    console.error('Error fetching subgoals:', error);
+    throw error;
+  }
+}
 
 export const fetchMilestones = async (user_id: string): Promise<Milestone[]> => {
   try {

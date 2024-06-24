@@ -6,14 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 
 interface GoalItemProps {
   goal: Goal;
-  milestones: Milestone[];
-  onOpenModal: (item: Goal | Milestone) => void;
+  subgoals: Goal[];
+  onOpenModal: (item: Goal ) => void;
 }
 
-const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
+const GoalItem: React.FC<GoalItemProps> = ({ goal, subgoals, onOpenModal }) => {
   const navigation = useNavigation();
 
-  const renderMilestoneItem = ({ item }: { item: Milestone }) => (
+  const renderMilestoneItem = ({ item }: { item: Goal }) => (
     <View style={styles.milestoneItem}>
       <TouchableOpacity
         style={[styles.completeButton, item.is_completed && styles.completedButton]}
@@ -49,10 +49,10 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
       </View>
       <View style={styles.separator} />
       <FlatList
-        data={milestones}
+        data={subgoals}
         renderItem={renderMilestoneItem}
         keyExtractor={(milestone) => milestone.id}
-        nestedScrollEnabled={true}
+        nestedScrollEnabled={false}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
       <TouchableOpacity style={styles.createMilestoneButton} onPress={handleCreateMilestone}>
