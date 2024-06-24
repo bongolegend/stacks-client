@@ -93,13 +93,10 @@ export const updateTaskCompletion = async ({ id, is_completed }: { id: string; i
 };
 
 export const addReactionToPost = async (userId: string, post: Post, emoji: EmojiType) => {
-  const reaction = {
-    user_id: userId,
-    goal_id: post.goal ? post.goal.id : null,
-    task_id: post.task ? post.task.id : null,
-    reaction: emoji,
-    reaction_library: "rn-emoji-keyboard:^1.7.0",
-  };
+  const reaction = post.task
+  ? { user_id: userId, task_id: post.task.id, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
+  : { user_id: userId, goal_id: post.goal.id, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" };
+
   const { data } = await api.post(`/0/reactions`, reaction);
   return data;
 };
