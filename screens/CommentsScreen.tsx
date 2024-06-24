@@ -19,16 +19,17 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState('');
 
-  const primary = post.task || post.goal;
+  const goal = post.goal;
+  const parent = post.parent;
 
   const { data: comments, refetch } = useQuery({
     queryKey: ['postComments', post.id],
-    queryFn: () => fetchCommentsForPost(post),
+    queryFn: () => fetchCommentsForPost(post.id),
     initialData: [],
   });
 
   const commentMutation = useMutation({
-    mutationFn: (newComment: { post: PostType; userId: string; comment: string }) =>
+    mutationFn: (newComment: { postId: PostType; userId: string; comment: string }) =>
       addCommentToPost(newComment),
     onSuccess: () => {
       refetch();
@@ -38,7 +39,7 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   });
 
   const handleAddComment = () => {
-    commentMutation.mutate({ post, userId: user!.id, comment: commentText });
+    commentMutation.mutate({ postId: post.id, userId: user!.id, comment: commentText });
   };
 
   return (
@@ -49,12 +50,12 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
       <View style={styles.postHeader}>
         <View style={styles.postHeaderRow}>
           <Text style={styles.username}>{post.user.username}</Text>
-          <Text style={styles.timestamp}>{new Date(primary.updated_at).toLocaleDateString()}</Text>
+          <Text style={styles.timestamp}>{new Date(goal.updated_at).toLocaleDateString()}</Text>
         </View>
-        {primary.title && <Text style={styles.primaryTitle}>{primary.title}</Text>}
-        {primary.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(primary.due_date).toLocaleDateString()}</Text>}
-        <Text style={styles.description}>{primary.description}</Text>
-        {post.task && <Text style={styles.goalTitle}>Goal: {post.goal.title}</Text>}
+        {goal.title && <Text style={styles.primaryTitle}>{goal.title}</Text>}
+        {goal.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(goal.due_date).toLocaleDateString()}</Text>}
+        <Text style={styles.description}>{goal.description}</Text>
+        {parent && <Text style={styles.goalTitle}>Goal: {parent.title}</Text>}
       </View>
       <FlatList
         data={comments}

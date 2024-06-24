@@ -92,26 +92,20 @@ export const updateTaskCompletion = async ({ id, is_completed }: { id: string; i
   return data;
 };
 
-export const addReactionToPost = async (userId: string, post: Post, emoji: EmojiType) => {
-  const reaction = post.task
-  ? { user_id: userId, task_id: post.task.id, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
-  : { user_id: userId, goal_id: post.goal.id, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" };
-
+export const addReactionToPost = async (userId: string, postId: string, emoji: EmojiType) => {
+  const reaction = { user_id: userId, goal_id: postId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
   const { data } = await api.post(`/0/reactions`, reaction);
   return data;
 };
 
-export const addCommentToPost = async ({ post, userId, comment }: { post: Post; userId: string; comment: string }) => {
-  const commentData = post.task 
-    ? { user_id: userId, task_id: post.task.id, comment } 
-    : { user_id: userId, goal_id: post.goal.id, comment };    
+export const addCommentToPost = async ({postId, userId, comment} : {postId: string, userId: string, comment: string}) => {
+  const commentData = { user_id: userId, goal_id: postId, comment };
   const { data } = await api.post(`/0/comments`, commentData);
   return data;
 };
 
-export const fetchCommentsForPost = async (post: Post) => {
-  const queryArgs = post.task ? `task_id=${post.task.id}` : `goal_id=${post.goal.id}`;
-  const { data } = await api.get(`/0/comments?${queryArgs}`);
+export const fetchCommentsForPost = async (postId: string) => {
+  const { data } = await api.get(`/0/comments?goal_id=${postId}`);
   return data;
 };
 

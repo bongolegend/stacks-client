@@ -16,10 +16,11 @@ export type User = z.infer<typeof User>;
 export const Goal = z.object({
     id: z.string(),
     user_id: z.string(),
-    title: z.string(),
+    parent_id: z.union([z.string(), z.null()]),
+    title: z.union([z.string(), z.null()]),
     description: z.string(),
     is_completed: z.boolean(),
-    due_date: z.string().optional(),
+    due_date: z.union([z.string(), z.null()]),
     created_at: z.string(),
     updated_at: z.string(),
   }).brand<"Goal">();
@@ -67,7 +68,7 @@ export const Post = z.object({
   id: z.string(),
   user: User,
   goal: Goal,
-  task: z.union([Milestone, z.null()]),
+  parent: z.union([Goal, z.null()]),
   reactions: z.array(Reaction),
   comments_count: z.number(),
   sort_on: z.string(),

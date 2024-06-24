@@ -8,18 +8,19 @@ interface PostProps {
 }
 
 const Post: React.FC<PostProps> = ({ item }) => {
-  const primary = item.task || item.goal;
+  const goal = item.goal;
+  const parent = item.parent;
 
   return (
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
         <Text style={styles.username}>{item.user.username}</Text>
-        <Text style={styles.updatedAt}>{new Date(primary.updated_at).toLocaleDateString()}</Text>
+        <Text style={styles.updatedAt}>{new Date(goal.updated_at).toLocaleDateString()}</Text>
       </View>
-      {primary.title && <Text style={styles.primaryTitle}>{primary.title}</Text>}
-      {primary.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(primary.due_date).toLocaleDateString()}</Text>}
-      <Text style={styles.primaryDescription}>{primary.description}</Text>
-      {item.task && <Text style={styles.goalTitle}>Goal: {item.goal.title}</Text>}
+      {goal.title && <Text style={styles.primaryTitle}>{goal.title}</Text>}
+      {goal.due_date && <Text style={styles.primaryDueDate}>Due Date: {new Date(goal.due_date).toLocaleDateString()}</Text>}
+      <Text style={styles.primaryDescription}>{goal.description}</Text>
+      {parent && <Text style={styles.goalTitle}>Goal: {parent.title}</Text>}
       <Interactions item={item} />
     </View>
   );

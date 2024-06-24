@@ -6,10 +6,10 @@ import { addReactionToPost } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Post as PostType } from '../types/requests';
+import { Post } from '../types/requests';
 
 interface InteractionsProps {
-  item: PostType;
+  item: Post;
 }
 
 const Interactions: React.FC<InteractionsProps> = ({ item }) => {
@@ -19,7 +19,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const reactionMutation = useMutation({
-    mutationFn: (emoji: EmojiType) => addReactionToPost(user?.id!, item, emoji),
+    mutationFn: (emoji: EmojiType) => addReactionToPost(user?.id!, item.id, emoji),
     onSuccess: () => {
       queryClient.invalidateQueries(['timeline', user?.id]);
     },
