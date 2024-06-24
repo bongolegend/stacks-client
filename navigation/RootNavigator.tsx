@@ -13,7 +13,7 @@ import { RootStackParamList } from './types';
 import LeadersScreen from '../screens/LeadersScreen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-
+import Profile from '../screens/Profile';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -29,6 +29,8 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
       <Stack.Screen name="CreateGoal" component={CreateGoal} options={{ headerShown: false }} />
       <Stack.Screen name="CreateMilestone" component={CreateMilestone} options={{ headerShown: false }} />
       <Stack.Screen name="CommentsScreen" component={CommentsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+
       <Stack.Screen name="Followers" component={FollowersScreen} options={({ navigation }) => ({
         headerTitle: 'Followers',
         headerTitleAlign: 'center',

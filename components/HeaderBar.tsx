@@ -1,26 +1,16 @@
 // HeaderBar.tsx
 import React, { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import Drawer from './Drawer';
+import { useNavigation } from '@react-navigation/native';
 
 const HeaderBar: React.FC = () => {
-  const [drawerVisible, setDrawerVisible] = useState(false);
+  const navigation = useNavigation();
 
   return (
-    <>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => setDrawerVisible(true)} style={styles.avatarPlaceholder}></TouchableOpacity>
-        <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={drawerVisible}
-        onRequestClose={() => setDrawerVisible(false)}
-      >
-        <Drawer closeDrawer={() => setDrawerVisible(false)} />
-      </Modal>
-    </>
+    <View style={styles.headerContainer}>
+      <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.avatarPlaceholder}></TouchableOpacity>
+      <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
+    </View>
   );
 };
 
