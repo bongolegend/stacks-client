@@ -1,28 +1,27 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Milestone, Post } from '../types/requests';
+import { User, EmojiType, Goal, Post, Follow, Reaction } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
 });
 
-export const createUser = async (user: { email: string; username: string }) => {
+export const createUser = async (user: User): Promise<User> => {
   const { data } = await api.post('/0/users', user);
   return data;
 };
 
-export const loginUser = async (username: string) => {
+export const loginUser = async (username: string): Promise<User> => {
   const { data } = await api.get(`/0/users?username=${username}`);
   return data[0];
 };
 
-export const createGoal = async (goal: { user_id: string; title?: string; description: string; is_completed: boolean; due_date?: string }) => {
+export const createGoal = async (goal: Goal): Promise<Goal> => {
   const { data } = await api.post('/0/goals', goal);
   return data;
 };
 
-export const createSubgoal = async (subgoal: { user_id: string; parent_id: string; description: string; is_completed: boolean }) => {
-
+export const createSubgoal = async (subgoal: Goal): Promise<Goal> => {
   const { data } = await api.post('/0/goals', {
     user_id: subgoal.user_id, 
     parent_id: subgoal.parent_id, 
@@ -42,53 +41,26 @@ export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
   }
 };
 
-export const fetchSubGoals = async (user_id: string): Promise<Goal[]> => {
-  try {
-    const { data } = await api.get(`/0/goals?user_id=${user_id}`);
-    const goals = data.map((goal: any) => Goal.parse(goal));
-    return goals;
-  } catch (error) {
-    console.error('Error fetching subgoals:', error);
-    throw error;
-  }
-}
-
-export const fetchMilestones = async (user_id: string): Promise<Milestone[]> => {
-  try {
-    const { data } = await api.get(`/0/tasks?user_id=${user_id}`);
-    const milestones = data.map((milestone: any) => Milestone.parse(milestone));
-    return milestones;
-  } catch (error) {
-    console.error('Error fetching milestones:', error);
-    throw error;
-  }
-};
-
 export const fetchTimeline = async (user_id: string): Promise<Post[]> => {
-  try {
-    const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
-    const posts = data.map((result: any) => {
-      const parsed = Post.safeParse(result);
-      if (!parsed.success) {
-        console.error('Error parsing post:', parsed.error.format());
-        return null;
-      } else {
-        return parsed.data;
-      }
-    }).filter((post: Post | null): post is Post => post !== null);
-    return posts;
-  } catch (error) {
-    console.error('Error fetching timeline:', error);
-    throw error;
-  }
+  const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
+  const posts = data.map((result: any) => {
+    const parsed = Post.safeParse(result);
+    if (!parsed.success) {
+      console.error('Error parsing post:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return posts;
 };
 
-export const fetchUsers = async (user_id: string) => {
+export const fetchUsers = async (user_id: string): Promise<User[]> => {
   const { data } = await api.get(`/0/users/${user_id}/search`);
   return data;
 };
 
-export const followUser = async (follower_id: string, leader_id: string) => {
+export const followUser = async (follower_id: string, leader_id: string): Promise<Follow>  => {
   const { data } = await api.post('/0/follows', { follower_id, leader_id });
   return data;
 };
@@ -98,30 +70,24 @@ export const unfollowUser = async (follower_id: string, leader_id: string) => {
   return data;
 };
 
-export const updateGoalCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }) => {
+export const updateGoalCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }): Promise<Goal> => {
   const { data } = await api.patch(`/0/goals/${id}`, { is_completed });
   return data;
 };
 
-export const updateTaskCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }) => {
-  const { data } = await api.patch(`/0/tasks/${id}`, { is_completed });
-  return data;
-};
-
-export const addReactionToPost = async (userId: string, postId: string, emoji: EmojiType) => {
-  const reaction = { user_id: userId, goal_id: postId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
+export const addReaction = async (userId: string, goalId: string, emoji: EmojiType): Promise<Reaction> => {
+  const reaction = { user_id: userId, goal_id: goalId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
   const { data } = await api.post(`/0/reactions`, reaction);
   return data;
 };
 
-export const addCommentToPost = async ({postId, userId, comment} : {postId: string, userId: string, comment: string}) => {
-  const commentData = { user_id: userId, goal_id: postId, comment };
-  const { data } = await api.post(`/0/comments`, commentData);
+export const addComment = async (comment: Comment): Promise<Comment> => {
+  const { data } = await api.post(`/0/comments`, comment);
   return data;
 };
 
-export const fetchCommentsForPost = async (postId: string) => {
-  const { data } = await api.get(`/0/comments?goal_id=${postId}`);
+export const fetchComments = async (goalId: string): Promise<Comment[]> => {
+  const { data } = await api.get(`/0/comments?goal_id=${goalId}`);
   return data;
 };
 

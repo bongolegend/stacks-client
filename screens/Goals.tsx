@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, fetchSubGoals, updateGoalCompletion, updateTaskCompletion } from '../services/api';
+import { fetchGoals, updateGoalCompletion } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
 import CompletionModal from '../components/CompletionModal';
@@ -20,12 +20,6 @@ const Goals: React.FC = () => {
     enabled: !!user,
   });
 
-  // const { data: subgoals, isLoading: subgoalsLoading } = useQuery({
-  //   queryKey: ['subgoals', user?.id],
-  //   queryFn: () => fetchSubGoals(user!.id),
-  //   enabled: !!user,
-  // });
-
   const goalMutation = useMutation({
     mutationFn: updateGoalCompletion,
     onSuccess: () => {
@@ -33,12 +27,6 @@ const Goals: React.FC = () => {
     },
   });
 
-  // const subgoalMutation = useMutation({
-  //   mutationFn: updateTaskCompletion,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries(['subgoals', user?.id]);
-  //   },
-  // });
 
   const handleOpenModal = (item: Goal ) => {
     setSelectedItem(item);
@@ -60,12 +48,6 @@ const Goals: React.FC = () => {
     }
   };
 
-  // const handleMilestoneToggle = (milestone: Milestone) => {
-  //   subgoalMutation.mutate({
-  //     taskId: milestone.id,
-  //     is_completed: !milestone.is_completed,
-  //   });
-  // };
 
   return (
     <View style={styles.container}>

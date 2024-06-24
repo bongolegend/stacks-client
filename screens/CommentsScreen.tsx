@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Button, KeyboardAvoidingView, Platform } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchCommentsForPost, addCommentToPost } from '../services/api';
+import { fetchComments, addComment } from '../services/api';
 import { useUser } from '../contexts/UserContext';
-import { Post as PostType } from '../types/requests';
+import { Post as PostType, Comment } from '../types/requests';
 
 interface CommentsScreenProps {
   route: {
@@ -24,13 +24,13 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
 
   const { data: comments, refetch } = useQuery({
     queryKey: ['postComments', post.id],
-    queryFn: () => fetchCommentsForPost(post.id),
+    queryFn: () => fetchComments(post.id),
     initialData: [],
   });
 
   const commentMutation = useMutation({
-    mutationFn: (newComment: { postId: PostType; userId: string; comment: string }) =>
-      addCommentToPost(newComment),
+    mutationFn: (comment: Comment) =>
+      addComment(comment),
     onSuccess: () => {
       refetch();
       setCommentText('');
@@ -39,7 +39,7 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   });
 
   const handleAddComment = () => {
-    commentMutation.mutate({ postId: post.id, userId: user!.id, comment: commentText });
+    commentMutation.mutate({ goal_id: post.id, user_id: user!.id, comment: commentText });
   };
 
   return (

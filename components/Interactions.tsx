@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addReactionToPost } from '../services/api';
+import { addReaction } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -19,7 +19,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
   const reactionMutation = useMutation({
-    mutationFn: (emoji: EmojiType) => addReactionToPost(user?.id!, item.id, emoji),
+    mutationFn: (emoji: EmojiType) => addReaction(user?.id!, item.id, emoji),
     onSuccess: () => {
       queryClient.invalidateQueries(['timeline', user?.id]);
     },
