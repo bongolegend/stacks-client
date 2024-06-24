@@ -55,10 +55,6 @@ export const fetchTimeline = async (user_id: string): Promise<Post[]> => {
   return posts;
 };
 
-export const fetchUsers = async (user_id: string): Promise<User[]> => {
-  const { data } = await api.get(`/0/users/${user_id}/search`);
-  return data;
-};
 
 export const followUser = async (follower_id: string, leader_id: string): Promise<Follow>  => {
   const { data } = await api.post('/0/follows', { follower_id, leader_id });
@@ -66,6 +62,7 @@ export const followUser = async (follower_id: string, leader_id: string): Promis
 };
 
 export const unfollowUser = async (follower_id: string, leader_id: string) => {
+  console.log('unfollowing', follower_id, leader_id);
   const { data } = await api.delete(`/0/follows/${follower_id}/leaders/${leader_id}`);
   return data;
 };
@@ -89,6 +86,11 @@ export const addComment = async (comment: Comment): Promise<Comment> => {
 export const fetchComments = async (goalId: string): Promise<Comment[]> => {
   const { data } = await api.get(`/0/comments?goal_id=${goalId}`);
   return data;
+};
+
+export const fetchUsers = async (user_id: string): Promise<User[]> => {
+  const { data } = await api.get(`/0/users/${user_id}/search`);
+  return data.map((user: any) => User.parse(user));
 };
 
 export const fetchFollowers = async (user_id: string): Promise<User[]> => {

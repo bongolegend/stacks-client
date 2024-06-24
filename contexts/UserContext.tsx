@@ -1,15 +1,7 @@
 // UserContext.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { saveUser, getUser, removeUser } from '../services/storage';
-
-interface User {
-  email: string;
-  username: string;
-  id: string;
-  created_at: string;
-  updated_at: string;
-  leader: boolean;
-}
+import { User } from '../types/requests';
 
 interface UserContextType {
   user: User | null;

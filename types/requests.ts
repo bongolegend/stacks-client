@@ -8,7 +8,8 @@ export const User = z.object({
   email: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
-  leader: z.boolean().optional(),
+  follower: z.union([z.boolean(), z.null()]).optional(),
+  leader: z.union([z.boolean(), z.null()]).optional(),
 }).brand<"User">();
 
 export type User = z.infer<typeof User>;
