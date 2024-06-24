@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import SignOutModal from '../components/SignOutModal';
 
-const Profile: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
+const Profile: React.FC = () => {
   const { user, setUser } = useUser();
   const navigation = useNavigation();
   const [followCounts, setFollowCounts] = useState<{ followers: number; leaders: number }>({ followers: 0, leaders: 0 });
@@ -51,7 +51,6 @@ const Profile: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => {
           <Button
             title={`${followCounts.leaders} Following`}
             onPress={() => {
-              closeDrawer();
               navigation.navigate('Leaders');
             }}
           />

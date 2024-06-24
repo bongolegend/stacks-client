@@ -28,26 +28,18 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
       <Stack.Screen name="InApp" component={InApp} options={{ headerShown: false }} />
       <Stack.Screen name="CreateGoal" component={CreateGoal} options={{ headerShown: false }} />
       <Stack.Screen name="CreateMilestone" component={CreateMilestone} options={{ headerShown: false }} />
-      <Stack.Screen name="CommentsScreen" component={CommentsScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="CommentsScreen" component={CommentsScreen} options={() => ({
+        headerTitle: 'Comments',
+        headerTitleAlign: 'center',
+      })} />
       <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-
-      <Stack.Screen name="Followers" component={FollowersScreen} options={({ navigation }) => ({
+      <Stack.Screen name="Followers" component={FollowersScreen} options={() => ({
         headerTitle: 'Followers',
         headerTitleAlign: 'center',
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-        ),
       })} />
-      <Stack.Screen name="Leaders" component={LeadersScreen} options={({ navigation }) => ({
+      <Stack.Screen name="Leaders" component={LeadersScreen} options={() => ({
         headerTitle: 'Following',
         headerTitleAlign: 'center',
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-        ),
       })} />
     </Stack.Navigator>
   </NavigationContainer>
