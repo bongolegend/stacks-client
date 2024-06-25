@@ -69,7 +69,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
         </TouchableOpacity>
         <TouchableOpacity onPress={handleOpenComments} style={styles.transparentButton}>
           <FontAwesome5 name="comment-alt" size={18} color="grey" />
-          <Text style={styles.commentCount}>{item.comments_count}</Text>
+          <Text style={styles.commentCount}>{item.comment_count}</Text>
         </TouchableOpacity>
       </View>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />

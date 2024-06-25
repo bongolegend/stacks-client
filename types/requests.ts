@@ -59,7 +59,7 @@ export const Announcement = z.object({
   goal: Goal,
   parent: z.union([Goal, z.null()]),
   reactions: z.array(Reaction),
-  comments_count: z.number(),
+  comment_count: z.number(),
   sort_on: z.string(),
   created_at: z.string(),
 }).strict().brand<"Announcement">();
