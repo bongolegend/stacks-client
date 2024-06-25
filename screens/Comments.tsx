@@ -5,7 +5,7 @@ import { fetchComments, addComment } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { Post as PostType, Comment } from '../types/requests';
 
-interface CommentsScreenProps {
+interface CommentsProps {
   route: {
     params: {
       post: PostType;
@@ -13,7 +13,7 @@ interface CommentsScreenProps {
   };
 }
 
-const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
+const Comments: React.FC<CommentsProps> = ({ route }) => {
   const { post } = route.params;
   const { user } = useUser();
   const queryClient = useQueryClient();
@@ -84,7 +84,7 @@ const CommentsScreen: React.FC<CommentsScreenProps> = ({ route }) => {
   );
 };
 
-export default CommentsScreen;
+export default Comments;
 
 const styles = StyleSheet.create({
   container: {

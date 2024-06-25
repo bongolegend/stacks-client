@@ -39,7 +39,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   };
 
   const handleOpenComments = () => {
-    navigation.navigate('CommentsScreen', { post: item });
+    navigation.navigate('Comments', { post: item });
   };
 
   // Group reactions by emoji
