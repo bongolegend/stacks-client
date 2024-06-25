@@ -17,7 +17,7 @@ const InApp: React.FC = () => {
     <View style={styles.container}>
       <HeaderBar />
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen name="Announcements" component={Announcements} />
+        <Tab.Screen name="Timeline" component={Announcements} />
         <Tab.Screen name="Goals" component={Goals} />
         <Tab.Screen name="Search" component={Search} />
       </Tab.Navigator>
