@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Post, Follow, Reaction } from '../types/requests';
+import { User, EmojiType, Goal, Announcement, Follow, Reaction, Comment } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -32,12 +32,12 @@ export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
   }
 };
 
-export const fetchTimeline = async (user_id: string): Promise<Post[]> => {
-  const { data } = await api.get(`/0/timelines/${user_id}/leaders`);
+export const fetchAnnouncements = async (user_id: string): Promise<Announcement[]> => {
+  const { data } = await api.get(`/0/announcements/${user_id}`);
   const posts = data.map((result: any) => {
-    const parsed = Post.safeParse(result);
+    const parsed = Announcement.safeParse(result);
     if (!parsed.success) {
-      console.error('Error parsing post:', parsed.error.format());
+      console.error('Error parsing Announcement:', parsed.error.format());
       return null;
     } else {
       return parsed.data;

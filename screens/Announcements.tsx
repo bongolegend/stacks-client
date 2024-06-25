@@ -1,29 +1,29 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { fetchTimeline } from '../services/api';
+import { fetchAnnouncements } from '../services/api';
 import { useUser } from '../contexts/UserContext';
-import Post from '../components/Post';
-import { Post as PostType } from '../types/requests';
+import Announcement from '../components/Announcement';
 
-const Timeline: React.FC = () => {
+
+const Announcements: React.FC = () => {
   const { user } = useUser();
 
-  const { data: posts, isLoading: timelineLoading } = useQuery({
-    queryKey: ['timeline', user?.id],
-    queryFn: () => fetchTimeline(user!.id),
+  const { data: announcements, isLoading } = useQuery({
+    queryKey: ['announcements', user?.id],
+    queryFn: () => fetchAnnouncements(user!.id),
     enabled: !!user,
   });
 
   return (
     <View style={styles.container}>
-      {timelineLoading ? (
+      {isLoading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={posts}
+          data={announcements}
           renderItem={({ item }) => (
-            <Post item={item} />
+            <Announcement item={item} />
           )}
           keyExtractor={(item) => item.id}
         />
@@ -32,7 +32,7 @@ const Timeline: React.FC = () => {
   );
 };
 
-export default Timeline;
+export default Announcements;
 
 const styles = StyleSheet.create({
   container: {

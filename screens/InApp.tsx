@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Timeline from '../screens/Timeline';
+import Announcements from './Announcements';
 import Goals from './Goals';
 import Search from './Search';
 import { useNavigation } from '@react-navigation/native';
@@ -17,7 +17,7 @@ const InApp: React.FC = () => {
     <View style={styles.container}>
       <HeaderBar />
       <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen name="Timeline" component={Timeline} />
+        <Tab.Screen name="Announcements" component={Announcements} />
         <Tab.Screen name="Goals" component={Goals} />
         <Tab.Screen name="Search" component={Search} />
       </Tab.Navigator>

@@ -54,7 +54,7 @@ export const Reaction = z.object({
 
 export type Reaction = z.infer<typeof Reaction>;
 
-export const Post = z.object({
+export const Announcement = z.object({
   id: z.string(),
   user: User,
   goal: Goal,
@@ -63,9 +63,9 @@ export const Post = z.object({
   comments_count: z.number(),
   sort_on: z.string(),
   created_at: z.string(),
-}).strict().brand<"Post">();
+}).strict().brand<"Announcement">();
 
-export type Post = z.infer<typeof Post>;
+export type Announcement = z.infer<typeof Announcement>;
 
 
 export const Follow = z.object({
@@ -84,6 +84,7 @@ export const Comment = z.object({
   comment: z.string(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
+  user: User.optional(),
 }).strict().brand<"Comment">();
 
 export type Comment = z.infer<typeof Comment>;

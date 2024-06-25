@@ -6,10 +6,10 @@ import { addReaction } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Post } from '../types/requests';
+import { Announcement } from '../types/requests';
 
 interface InteractionsProps {
-  item: Post;
+  item: Announcement;
 }
 
 const Interactions: React.FC<InteractionsProps> = ({ item }) => {
@@ -21,7 +21,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   const reactionMutation = useMutation({
     mutationFn: (emoji: EmojiType) => addReaction(user?.id!, item.id, emoji),
     onSuccess: () => {
-      queryClient.invalidateQueries(['timeline', user?.id]);
+      queryClient.invalidateQueries(['announcements', user?.id]);
     },
   });
 
@@ -39,7 +39,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   };
 
   const handleOpenComments = () => {
-    navigation.navigate('Comments', { post: item });
+    navigation.navigate('Comments', { announcement: item });
   };
 
   // Group reactions by emoji

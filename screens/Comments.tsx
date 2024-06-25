@@ -3,28 +3,28 @@ import { View, Text, FlatList, StyleSheet, TextInput, Button, KeyboardAvoidingVi
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchComments, addComment } from '../services/api';
 import { useUser } from '../contexts/UserContext';
-import { Post as PostType, Comment } from '../types/requests';
+import { Announcement, Comment } from '../types/requests';
 
 interface CommentsProps {
   route: {
     params: {
-      post: PostType;
+      announcement: Announcement;
     };
   };
 }
 
 const Comments: React.FC<CommentsProps> = ({ route }) => {
-  const { post } = route.params;
+  const { announcement: announcement } = route.params;
   const { user } = useUser();
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState('');
 
-  const goal = post.goal;
-  const parent = post.parent;
+  const goal = announcement.goal;
+  const parent = announcement.parent;
 
   const { data: comments, refetch } = useQuery({
-    queryKey: ['postComments', post.id],
-    queryFn: () => fetchComments(post.id),
+    queryKey: ['postComments', announcement.id],
+    queryFn: () => fetchComments(announcement.id),
     initialData: [],
   });
 
@@ -34,12 +34,12 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
     onSuccess: () => {
       refetch();
       setCommentText('');
-      queryClient.invalidateQueries(['timeline', user?.id]);
+      queryClient.invalidateQueries(['announcements', user?.id]);
     },
   });
 
   const handleAddComment = () => {
-    commentMutation.mutate({ goal_id: post.id, user_id: user!.id, comment: commentText });
+    commentMutation.mutate({ goal_id: announcement.id, user_id: user!.id, comment: commentText });
   };
 
   return (
@@ -49,7 +49,7 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
     >
       <View style={styles.postHeader}>
         <View style={styles.postHeaderRow}>
-          <Text style={styles.username}>{post.user.username}</Text>
+          <Text style={styles.username}>{announcement.user.username}</Text>
           <Text style={styles.timestamp}>{new Date(goal.updated_at).toLocaleDateString()}</Text>
         </View>
         {goal.title && <Text style={styles.primaryTitle}>{goal.title}</Text>}

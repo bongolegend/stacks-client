@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Post as PostType } from '../types/requests';
+import { Announcement as AnnouncementType } from '../types/requests';
 import Interactions from './Interactions';
 
-interface PostProps {
-  item: PostType;
+interface AnnouncementProps {
+  item: AnnouncementType;
 }
 
-const Post: React.FC<PostProps> = ({ item }) => {
+const Announcement: React.FC<AnnouncementProps> = ({ item }) => {
   const goal = item.goal;
   const parent = item.parent;
 
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Post;
+export default Announcement;

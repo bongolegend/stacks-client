@@ -3,5 +3,5 @@ export type RootStackParamList = {
     InApp: { userId: string };
     CreateGoal: { userId: string };
     CreateMilestone: { userId: string };
-    Comments: { postId: string };
+    Comments: { announcementId: string };
   };
