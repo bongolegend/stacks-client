@@ -10,7 +10,7 @@ export const User = z.object({
   updated_at: z.string(),
   follower: z.union([z.boolean(), z.null()]).optional(),
   leader: z.union([z.boolean(), z.null()]).optional(),
-}).brand<"User">();
+}).strict().brand<"User">();
 
 export type User = z.infer<typeof User>;
 
@@ -24,7 +24,7 @@ export const Goal = z.object({
     due_date: z.union([z.string(), z.null()]),
     created_at: z.string(),
     updated_at: z.string(),
-  }).brand<"Goal">();
+  }).strict().brand<"Goal">();
   
 export type Goal = z.infer<typeof Goal>;
 
@@ -37,7 +37,7 @@ export const EmojiType = z.object({
   unicode_version: z.string(),
   toneEnabled: z.boolean(),
   alreadySelected: z.boolean().optional(),
-}).brand<"EmojiType">();
+}).strict().brand<"EmojiType">();
 
 export type EmojiType = z.infer<typeof EmojiType>;
 
@@ -48,7 +48,9 @@ export const Reaction = z.object({
   reaction_library: z.string(),
   task_id: z.union([z.string(), z.null()]),
   goal_id: z.union([z.string(), z.null()]),
-}).brand<"Reaction">();
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+}).strict().brand<"Reaction">();
 
 export type Reaction = z.infer<typeof Reaction>;
 
@@ -61,7 +63,7 @@ export const Post = z.object({
   comments_count: z.number(),
   sort_on: z.string(),
   created_at: z.string(),
-}).brand<"Post">();
+}).strict().brand<"Post">();
 
 export type Post = z.infer<typeof Post>;
 
@@ -71,7 +73,7 @@ export const Follow = z.object({
   leader_id: z.string(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
-}).brand<"Follow">();
+}).strict().brand<"Follow">();
 
 export type Follow = z.infer<typeof Follow>;
 
@@ -82,6 +84,6 @@ export const Comment = z.object({
   comment: z.string(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
-}).brand<"Comment">();
+}).strict().brand<"Comment">();
 
 export type Comment = z.infer<typeof Comment>;
