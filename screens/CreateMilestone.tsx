@@ -2,14 +2,38 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import SharedForm from '../components/SharedForm';
-import useMutationHandlers from '../utils/useMutationHandlers';
 import { createSubgoal } from '../services/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNotification } from '../contexts/NotificationContext';
+import { useUser } from '../contexts/UserContext';
+
+
 const CreateSubgoal: React.FC = () => {
   const [description, setDescription] = useState<string>('');
-  const handlePost = useMutationHandlers(createSubgoal, 'subgoals', 'Milestone Posted');
+  
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
+  const { showNotification } = useNotification();
+  const { user } = useUser();
+
+  const mutation = useMutation({
+    mutationFn: createSubgoal,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['goals']);
+      showNotification('Milestone created');
+      navigation.goBack();
+    },
+  });
+
+  const handlePost = (data: any) => {
+    if (user) {
+      mutation.mutate({ user_id: user.id, ...data });
+    }
+  };
+  
+  
   const route = useRoute();
   const { goalId } = route.params;
 
@@ -21,7 +45,7 @@ const CreateSubgoal: React.FC = () => {
     >
       <View style={styles.innerContainer}>
         <SharedForm
-          title="New Milestone"
+          title="Submit"
           placeholder="Enter your milestone..."
           value={description}
           setValue={setDescription}
