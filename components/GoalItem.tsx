@@ -6,11 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 
 interface GoalItemProps {
   goal: Goal;
-  subgoals: Goal[];
+  milestones: Goal[];
   onOpenModal: (item: Goal ) => void;
 }
 
-const GoalItem: React.FC<GoalItemProps> = ({ goal, subgoals, onOpenModal }) => {
+const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
   const navigation = useNavigation();
 
   const renderMilestoneItem = ({ item }: { item: Goal }) => (
@@ -49,7 +49,7 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, subgoals, onOpenModal }) => {
       </View>
       <View style={styles.separator} />
       <FlatList
-        data={subgoals}
+        data={milestones}
         renderItem={renderMilestoneItem}
         keyExtractor={(milestone) => milestone.id}
         nestedScrollEnabled={false}

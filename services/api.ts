@@ -21,15 +21,6 @@ export const createGoal = async (goal: Goal): Promise<Goal> => {
   return data;
 };
 
-export const createSubgoal = async (subgoal: Goal): Promise<Goal> => {
-  const { data } = await api.post('/0/goals', {
-    user_id: subgoal.user_id, 
-    parent_id: subgoal.parent_id, 
-    description: subgoal.description, 
-    is_completed: subgoal.is_completed});
-  return data;
-};
-
 export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
   try {
     const { data } = await api.get(`/0/goals?user_id=${user_id}`);
@@ -89,7 +80,7 @@ export const fetchComments = async (goalId: string): Promise<Comment[]> => {
 };
 
 export const fetchUsers = async (user_id: string): Promise<User[]> => {
-  const { data } = await api.get(`/0/users/${user_id}/search`);
+  const { data } = await api.get(`/0/users/search/${user_id}`);
   return data.map((user: any) => User.parse(user));
 };
 

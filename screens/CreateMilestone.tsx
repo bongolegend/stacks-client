@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import SharedForm from '../components/SharedForm';
-import { createSubgoal } from '../services/api';
+import { createGoal } from '../services/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ import { useNotification } from '../contexts/NotificationContext';
 import { useUser } from '../contexts/UserContext';
 
 
-const CreateSubgoal: React.FC = () => {
+const CreateMilestone: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   
   const queryClient = useQueryClient();
@@ -19,7 +19,7 @@ const CreateSubgoal: React.FC = () => {
   const { user } = useUser();
 
   const mutation = useMutation({
-    mutationFn: createSubgoal,
+    mutationFn: createGoal,
     onSuccess: () => {
       queryClient.invalidateQueries(['goals']);
       showNotification('Milestone created');
@@ -57,7 +57,7 @@ const CreateSubgoal: React.FC = () => {
   );
 };
 
-export default CreateSubgoal;
+export default CreateMilestone;
 
 const styles = StyleSheet.create({
   container: {

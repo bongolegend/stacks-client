@@ -60,7 +60,7 @@ const Goals: React.FC = () => {
           renderItem={({ item }) => (
             <GoalItem 
               goal={item} 
-              subgoals={goals?.filter(goal => goal.parent_id === item.id)} 
+              milestones={goals?.filter(goal => goal.parent_id === item.id)} 
               onOpenModal={handleOpenModal}
             />
           )}

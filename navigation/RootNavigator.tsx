@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../screens/Login';
 import InApp from '../screens/InApp';
 import CreateGoal from '../screens/CreateGoal';
-import CreateSubgoal from '../screens/CreateMilestone';
+import CreateMilestone from '../screens/CreateMilestone';
 import Comments from '../screens/Comments';
 import { RootStackParamList } from './types';
 import Profile from '../screens/Profile';
@@ -24,7 +24,7 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="InApp" component={InApp} options={{ headerShown: false }} />
       <Stack.Screen name="CreateGoal" component={CreateGoal} options={{ headerShown: false }} />
-      <Stack.Screen name="CreateMilestone" component={CreateSubgoal} options={{ headerShown: false }} />
+      <Stack.Screen name="CreateMilestone" component={CreateMilestone} options={{ headerShown: false }} />
       <Stack.Screen name="Comments" component={Comments} options={() => ({
         headerTitle: 'Comments',
         headerTitleAlign: 'center',
