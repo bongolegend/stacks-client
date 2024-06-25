@@ -46,7 +46,6 @@ export const Reaction = z.object({
   user_id: z.string(),
   reaction: z.record(z.any()),
   reaction_library: z.string(),
-  task_id: z.union([z.string(), z.null()]),
   goal_id: z.union([z.string(), z.null()]),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
@@ -88,3 +87,10 @@ export const Comment = z.object({
 }).strict().brand<"Comment">();
 
 export type Comment = z.infer<typeof Comment>;
+
+export const FollowCounts = z.object({
+  follower_count: z.number(),
+  leader_count: z.number(),
+}).strict().brand<"FollowCount">();
+
+export type FollowCounts = z.infer<typeof FollowCounts>;

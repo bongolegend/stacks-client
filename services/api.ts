@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Announcement, Follow, Reaction, Comment } from '../types/requests';
+import { User, EmojiType, Goal, Announcement, Follow, Reaction, Comment, FollowCounts } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -8,28 +8,46 @@ const api = axios.create({
 
 export const createUser = async (user: User): Promise<User> => {
   const { data } = await api.post('/0/users', user);
-  return data;
+  const parsed = User.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing User:', parsed.error.format());
+    throw new Error('Error parsing User');
+  }
+  return parsed.data;
 };
 
 export const loginUser = async (username: string): Promise<User> => {
   const { data } = await api.get(`/0/users?username=${username}`);
-  return data[0];
+  const parsed = User.safeParse(data[0]);
+  if (!parsed.success) {
+    console.error('Error parsing User:', parsed.error.format());
+    throw new Error('Error parsing User');
+  }
+  return parsed.data;
 };
 
 export const createGoal = async (goal: Goal): Promise<Goal> => {
   const { data } = await api.post('/0/goals', goal);
-  return data;
+  const parsed = Goal.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Goal:', parsed.error.format());
+    throw new Error('Error parsing Goal');
+  }
+  return parsed.data;
 };
 
 export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
-  try {
-    const { data } = await api.get(`/0/goals?user_id=${user_id}`);
-    const goals = data.map((goal: any) => Goal.parse(goal));
-    return goals;
-  } catch (error) {
-    console.error('Error fetching goals:', error);
-    throw error;
-  }
+  const { data } = await api.get(`/0/goals?user_id=${user_id}`);
+  const goals = data.map((goal: any) => {
+    const parsed = Goal.safeParse(goal);
+    if (!parsed.success) {
+      console.error('Error parsing Goal:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return goals;
 };
 
 export const fetchAnnouncements = async (user_id: string): Promise<Announcement[]> => {
@@ -46,55 +64,119 @@ export const fetchAnnouncements = async (user_id: string): Promise<Announcement[
   return posts;
 };
 
-
-export const followUser = async (follower_id: string, leader_id: string): Promise<Follow>  => {
+export const followUser = async (follower_id: string, leader_id: string): Promise<Follow> => {
   const { data } = await api.post('/0/follows', { follower_id, leader_id });
-  return data;
+  const parsed = Follow.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Follow:', parsed.error.format());
+    throw new Error('Error parsing Follow');
+  }
+  return parsed.data;
 };
 
-export const unfollowUser = async (follower_id: string, leader_id: string) => {
-  console.log('unfollowing', follower_id, leader_id);
+export const unfollowUser = async (follower_id: string, leader_id: string): Promise<Follow> => {
   const { data } = await api.delete(`/0/follows/${follower_id}/leaders/${leader_id}`);
-  return data;
+  const parsed = Follow.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Follow:', parsed.error.format());
+    throw new Error('Error parsing Follow');
+  }
+  return parsed.data;
 };
 
 export const updateGoalCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }): Promise<Goal> => {
   const { data } = await api.patch(`/0/goals/${id}`, { is_completed });
-  return data;
+  const parsed = Goal.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Goal:', parsed.error.format());
+    throw new Error('Error parsing Goal');
+  }
+  return parsed.data;
 };
 
 export const addReaction = async (userId: string, goalId: string, emoji: EmojiType): Promise<Reaction> => {
-  const reaction = { user_id: userId, goal_id: goalId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" }
+  const reaction = { user_id: userId, goal_id: goalId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" };
   const { data } = await api.post(`/0/reactions`, reaction);
-  return data;
+  const parsed = Reaction.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Reaction:', parsed.error.format());
+    throw new Error('Error parsing Reaction');
+  }
+  return parsed.data;
 };
 
 export const addComment = async (comment: Comment): Promise<Comment> => {
   const { data } = await api.post(`/0/comments`, comment);
-  return data;
+  const parsed = Comment.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing Comment:', parsed.error.format());
+    throw new Error('Error parsing Comment');
+  }
+  return parsed.data;
 };
 
 export const fetchComments = async (goalId: string): Promise<Comment[]> => {
   const { data } = await api.get(`/0/comments?goal_id=${goalId}`);
-  return data;
+  const comments = data.map((comment: any) => {
+    const parsed = Comment.safeParse(comment);
+    if (!parsed.success) {
+      console.error('Error parsing Comment:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return comments;
 };
 
 export const fetchUsers = async (user_id: string): Promise<User[]> => {
   const { data } = await api.get(`/0/users/search/${user_id}`);
-  return data.map((user: any) => User.parse(user));
+  const users = data.map((user: any) => {
+    const parsed = User.safeParse(user);
+    if (!parsed.success) {
+      console.error('Error parsing User:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return users;
 };
 
 export const fetchFollowers = async (user_id: string): Promise<User[]> => {
   const { data } = await api.get(`/0/users/followers/${user_id}`);
-  return data.map((user: any) => User.parse(user));
+  const users = data.map((user: any) => {
+    const parsed = User.safeParse(user);
+    if (!parsed.success) {
+      console.error('Error parsing User:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return users;
 };
 
 export const fetchLeaders = async (user_id: string): Promise<User[]> => {
   const { data } = await api.get(`/0/users/leaders/${user_id}`);
-  return data.map((user: any) => User.parse(user));
+  const users = data.map((user: any) => {
+    const parsed = User.safeParse(user);
+    if (!parsed.success) {
+      console.error('Error parsing User:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return users;
 };
 
-export const fetchFollowCounts = async (user_id: string): Promise<{ followers: number; leaders: number }> => {
+export const fetchFollowCounts = async (user_id: string): Promise<FollowCount> => {
   const { data } = await api.get(`/0/follows/counts/${user_id}`);
+  const parsed = FollowCounts.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing FollowCount:', parsed.error.format());
+    throw new Error('Error parsing FollowCount');
+  }
   return data;
 };
