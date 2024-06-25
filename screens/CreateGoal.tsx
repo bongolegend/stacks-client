@@ -2,10 +2,13 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet, TextInput, Button, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import useMutationHandlers from '../utils/useMutationHandlers';
 import { createGoal } from '../services/api';
 import { useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { useNotification } from '../contexts/NotificationContext';
+import { useUser } from '../contexts/UserContext';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
@@ -16,8 +19,26 @@ const CreateGoal: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<{ title?: string; dueDate?: string; description?: string }>({});
-  const handlePost = useMutationHandlers(createGoal, 'goals', 'Goal Posted');
+  
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
+  const { showNotification } = useNotification();
+  const { user } = useUser();
+
+  const mutation = useMutation({
+    mutationFn: createGoal,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['goals']);
+      showNotification('Goal Posted');
+      navigation.goBack();
+    },
+  });
+
+  const handlePost = (data: any) => {
+    if (user) {
+      mutation.mutate({ user_id: user.id, ...data });
+    }
+  };
 
   const validateFields = () => {
     const newErrors: { title?: string; dueDate?: string; description?: string } = {};
