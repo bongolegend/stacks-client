@@ -1,22 +1,19 @@
 // Filename: screens/CreateMilestone.tsx
-import React, { useState } from 'react';
-import { View, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import SharedForm from '../components/SharedForm';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import { createGoal } from '../services/api';
 import { useNavigation, useRoute } from '@react-navigation/native';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNotification } from '../contexts/NotificationContext';
 import { useUser } from '../contexts/UserContext';
 
-
 const CreateMilestone: React.FC = () => {
   const [description, setDescription] = useState<string>('');
-  
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const { showNotification } = useNotification();
   const { user } = useUser();
+  const textInputRef = useRef<TextInput>(null);
 
   const mutation = useMutation({
     mutationFn: createGoal,
@@ -32,10 +29,18 @@ const CreateMilestone: React.FC = () => {
       mutation.mutate({ user_id: user.id, ...data });
     }
   };
-  
-  
+
   const route = useRoute();
   const { goalId } = route.params;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (textInputRef.current) {
+        textInputRef.current.focus();
+      }
+    }, 300); 
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -44,14 +49,26 @@ const CreateMilestone: React.FC = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <View style={styles.innerContainer}>
-        <SharedForm
-          title="Submit"
-          placeholder="Enter your milestone..."
-          value={description}
-          setValue={setDescription}
-          onPost={() => handlePost({ parent_id: goalId, description, is_completed: false })}
-          navigation={navigation}
-        />
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+              <Text style={styles.buttonText}>X</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.postButton} onPress={() => handlePost({ parent_id: goalId, description, is_completed: false })}>
+              <Text style={styles.postButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={textInputRef}
+              style={styles.textInput}
+              placeholder="Enter your milestone..."
+              multiline
+              value={description}
+              onChangeText={setDescription}
+            />
+          </View>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -62,6 +79,39 @@ export default CreateMilestone;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#f0f0f0',
+  },
+  button: {
+    padding: 10,
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#000',
+  },
+  postButton: {
+    padding: 10,
+    backgroundColor: '#03A9F4',
+    borderRadius: 5,
+  },
+  postButtonText: {
+    fontSize: 18,
+    color: '#fff',
+  },
+  inputContainer: {
+    padding: 16,
+  },
+  textInput: {
+    fontSize: 18,
+    textAlignVertical: 'top',
+    minHeight: 100,
   },
   innerContainer: {
     flex: 1,
