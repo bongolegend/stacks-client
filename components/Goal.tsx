@@ -1,7 +1,7 @@
 // Filename: components/GoalItem.tsx
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Goal, Milestone } from '../types/requests';
+import { Goal } from '../types/requests';
 import { useNavigation } from '@react-navigation/native';
 
 interface GoalItemProps {

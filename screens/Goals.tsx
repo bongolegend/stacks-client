@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchGoals, updateGoalCompletion } from '../services/api';
 import { useUser } from '../contexts/UserContext';
-import GoalItem from '../components/GoalItem';
+import GoalItem from '../components/Goal';
 import CompletionModal from '../components/CompletionModal';
 import { Goal } from '../types/requests';
 
