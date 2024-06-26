@@ -37,7 +37,7 @@ export const createGoal = async (goal: Goal): Promise<Goal> => {
 };
 
 export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
-  const { data } = await api.get(`/0/goals?user_id=${user_id}`);
+  const { data } = await api.get(`/0/goals/${user_id}`);
   const goals = data.map((goal: any) => {
     const parsed = GoalEnriched.safeParse(goal);
     if (!parsed.success) {
@@ -50,18 +50,18 @@ export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
   return goals;
 };
 
-export const fetchAnnouncements = async (user_id: string): Promise<Announcement[]> => {
-  const { data } = await api.get(`/0/announcements/${user_id}`);
-  const posts = data.map((result: any) => {
-    const parsed = Announcement.safeParse(result);
+export const fetchAnnouncements = async (user_id: string): Promise<GoalEnriched[]> => {
+  const { data } = await api.get(`/0/goals/announcements/${user_id}`);
+  const announcements = data.map((result: any) => {
+    const parsed = GoalEnriched.safeParse(result);
     if (!parsed.success) {
-      console.error('Error parsing Announcement:', parsed.error.format());
+      console.error('Error parsing GoalEnriched:', parsed.error.format());
       return null;
     } else {
       return parsed.data;
     }
   });
-  return posts;
+  return announcements;
 };
 
 export const followUser = async (follower_id: string, leader_id: string): Promise<Follow> => {
