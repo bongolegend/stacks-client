@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addReaction } from '../services/api';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { addReaction, fetchReactions, fetchComments } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -18,10 +18,23 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   const navigation = useNavigation();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
+  // TODO prevent all the queries from being re-fetched when a new reaction is added
+  const { data: reactions, isLoading: reactionsLoading } = useQuery({
+    queryFn: () => fetchReactions(item.id),
+    queryKey: ['reactions', item.id],
+    enabled: !!item.id,
+  });
+
+  const { data: comments, isLoading: commentsLoading } = useQuery({
+    queryFn: () => fetchComments(item.id),
+    queryKey: ['comments', item.id],
+    enabled: !!item.id,
+  });
+
   const reactionMutation = useMutation({
     mutationFn: (emoji: EmojiType) => addReaction(user?.id!, item.id, emoji),
     onSuccess: () => {
-      queryClient.invalidateQueries(['announcements', user?.id]);
+      queryClient.invalidateQueries(['reactions', item.id]);
     },
   });
 
@@ -42,8 +55,14 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
     navigation.navigate('Comments', { announcement: item });
   };
 
+  if (reactionsLoading || commentsLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  const comment_count = comments ? comments.length : 0;
+
   // Group reactions by emoji
-  const groupedReactions = item.reactions.reduce((acc: { [key: string]: number }, reaction) => {
+  const groupedReactions = reactions.reduce((acc: { [key: string]: number }, reaction) => {
     const emoji = reaction.reaction.emoji;
     if (!acc[emoji]) {
       acc[emoji] = 0;
@@ -69,7 +88,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
         </TouchableOpacity>
         <TouchableOpacity onPress={handleOpenComments} style={styles.transparentButton}>
           <FontAwesome5 name="comment-alt" size={18} color="grey" />
-          <Text style={styles.commentCount}>{item.comment_count}</Text>
+          <Text style={styles.commentCount}>{comment_count}</Text>
         </TouchableOpacity>
       </View>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />

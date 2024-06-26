@@ -105,6 +105,20 @@ export const addReaction = async (userId: string, goalId: string, emoji: EmojiTy
   return parsed.data;
 };
 
+export const fetchReactions = async (goalId: string): Promise<Reaction[]> => {
+  const { data } = await api.get(`/0/reactions?goal_id=${goalId}`);
+  const reactions = data.map((reaction: any) => {
+    const parsed = Reaction.safeParse(reaction);
+    if (!parsed.success) {
+      console.error('Error parsing Reaction:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return reactions;
+}
+
 export const addComment = async (comment: Comment): Promise<Comment> => {
   const { data } = await api.post(`/0/comments`, comment);
   const parsed = Comment.safeParse(data);

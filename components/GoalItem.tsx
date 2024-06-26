@@ -3,11 +3,12 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { Goal } from '../types/requests';
 import { useNavigation } from '@react-navigation/native';
+import Interactions from '../components/Interactions';
 
 interface GoalItemProps {
   goal: Goal;
   milestones: Goal[];
-  onOpenModal: (item: Goal ) => void;
+  onOpenModal: (item: Goal) => void;
 }
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
@@ -22,6 +23,7 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
       <View style={styles.milestoneTextContainer}>
         <Text style={[styles.milestoneDescription, item.is_completed && styles.completedText]}>{item.description}</Text>
         <Text style={[styles.milestoneDate, item.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
+        <Interactions item={item} />
       </View>
     </View>
   );
@@ -45,6 +47,7 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
             </Text>
           )}
           <Text style={[styles.goalDescription, goal.is_completed && styles.completedText]}>{goal.description}</Text>
+          <Interactions item={goal} />
         </View>
       </View>
       <View style={styles.separator} />
