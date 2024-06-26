@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   milestoneDescription: {
-    fontSize: 14,
+    fontSize: 16,
   },
   milestoneDate: {
     fontSize: 12,
@@ -121,6 +121,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 2,
     borderRadius: 5,
+    alignSelf: 'flex-start',
+    marginTop: 4,
   },
   completedButton: {
     backgroundColor: '#8FBC8F',
