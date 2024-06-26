@@ -28,6 +28,22 @@ export const Goal = z.object({
   
 export type Goal = z.infer<typeof Goal>;
 
+export const GoalEnriched = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  parent_id: z.union([z.string(), z.null()]),
+  user: User,
+  parent: z.union([Goal, z.null()]),
+  title: z.union([z.string(), z.null()]),
+  description: z.string(),
+  is_completed: z.boolean(),
+  due_date: z.union([z.string(), z.null()]),
+  created_at: z.string(),
+  updated_at: z.string(),
+}).strict().brand<"GoalEnriched">();
+
+export type GoalEnriched = z.infer<typeof GoalEnriched>;
+
 
 // hardcoded emoji data from rn-emoji-keyboard lib
 export const EmojiType = z.object({
@@ -76,7 +92,7 @@ export const Follow = z.object({
 
 export type Follow = z.infer<typeof Follow>;
 
-export const Comment = z.object({
+export const CommentEnriched = z.object({
   id: z.string().optional(),
   user_id: z.string(),
   goal_id: z.string(),
@@ -84,9 +100,9 @@ export const Comment = z.object({
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
   user: User.optional(),
-}).strict().brand<"Comment">();
+}).strict().brand<"CommentEnriched">();
 
-export type Comment = z.infer<typeof Comment>;
+export type CommentEnriched = z.infer<typeof CommentEnriched>;
 
 export const FollowCounts = z.object({
   follower_count: z.number(),

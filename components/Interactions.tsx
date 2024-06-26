@@ -6,10 +6,10 @@ import { addReaction, fetchReactions, fetchComments } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Announcement } from '../types/requests';
+import { GoalEnriched } from '../types/requests';
 
 interface InteractionsProps {
-  item: Announcement;
+  item: GoalEnriched;
 }
 
 const Interactions: React.FC<InteractionsProps> = ({ item }) => {
@@ -52,7 +52,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   };
 
   const handleOpenComments = () => {
-    navigation.navigate('Comments', { announcement: item });
+    navigation.navigate('Comments', { goal: item });
   };
 
   if (reactionsLoading || commentsLoading) {

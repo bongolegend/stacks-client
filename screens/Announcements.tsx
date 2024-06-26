@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
-import { fetchAnnouncements } from '../services/api';
+import { fetchAnnouncements, fetchGoals } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import Announcement from '../components/Announcement';
 
@@ -11,7 +11,8 @@ const Announcements: React.FC = () => {
 
   const { data: announcements, isLoading } = useQuery({
     queryKey: ['announcements', user?.id],
-    queryFn: () => fetchAnnouncements(user!.id),
+    queryFn: () => fetchGoals(user!.id),
+    // queryFn: () => fetchAnnouncements(user!.id),
     enabled: !!user,
   });
 

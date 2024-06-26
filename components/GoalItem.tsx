@@ -1,20 +1,20 @@
 // Filename: components/GoalItem.tsx
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { Goal } from '../types/requests';
+import { GoalEnriched } from '../types/requests';
 import { useNavigation } from '@react-navigation/native';
 import Interactions from '../components/Interactions';
 
 interface GoalItemProps {
-  goal: Goal;
-  milestones: Goal[];
-  onOpenModal: (item: Goal) => void;
+  goal: GoalEnriched;
+  milestones: GoalEnriched[];
+  onOpenModal: (item: GoalEnriched) => void;
 }
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
   const navigation = useNavigation();
 
-  const renderMilestoneItem = ({ item }: { item: Goal }) => (
+  const renderMilestoneItem = ({ item }: { item: GoalEnriched }) => (
     <View style={styles.milestoneItem}>
       <TouchableOpacity
         style={[styles.completeButton, item.is_completed && styles.completedButton]}

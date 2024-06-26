@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Announcement as AnnouncementType } from '../types/requests';
+import { GoalEnriched } from '../types/requests';
 import Interactions from './Interactions';
 
 interface AnnouncementProps {
-  item: AnnouncementType;
+  item: GoalEnriched;
 }
 
 const Announcement: React.FC<AnnouncementProps> = ({ item }) => {
-  const goal = item.goal;
+  const goal = item;
   const parent = item.parent;
 
   return (

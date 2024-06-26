@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Announcement, Follow, Reaction, Comment, FollowCounts } from '../types/requests';
+import { User, EmojiType, Goal, Announcement, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -36,10 +36,10 @@ export const createGoal = async (goal: Goal): Promise<Goal> => {
   return parsed.data;
 };
 
-export const fetchGoals = async (user_id: string): Promise<Goal[]> => {
+export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
   const { data } = await api.get(`/0/goals?user_id=${user_id}`);
   const goals = data.map((goal: any) => {
-    const parsed = Goal.safeParse(goal);
+    const parsed = GoalEnriched.safeParse(goal);
     if (!parsed.success) {
       console.error('Error parsing Goal:', parsed.error.format());
       return null;
@@ -121,7 +121,7 @@ export const fetchReactions = async (goalId: string): Promise<Reaction[]> => {
 
 export const addComment = async (comment: Comment): Promise<Comment> => {
   const { data } = await api.post(`/0/comments`, comment);
-  const parsed = Comment.safeParse(data);
+  const parsed = CommentEnriched.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Comment:', parsed.error.format());
     throw new Error('Error parsing Comment');
@@ -129,10 +129,10 @@ export const addComment = async (comment: Comment): Promise<Comment> => {
   return parsed.data;
 };
 
-export const fetchComments = async (goalId: string): Promise<Comment[]> => {
+export const fetchComments = async (goalId: string): Promise<CommentEnriched[]> => {
   const { data } = await api.get(`/0/comments?goal_id=${goalId}`);
   const comments = data.map((comment: any) => {
-    const parsed = Comment.safeParse(comment);
+    const parsed = CommentEnriched.safeParse(comment);
     if (!parsed.success) {
       console.error('Error parsing Comment:', parsed.error.format());
       return null;
