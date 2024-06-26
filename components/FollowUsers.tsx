@@ -18,7 +18,7 @@ const FollowUsers: React.FC<FollowUsersProps> = ({ user, users, queryKey }) => {
     mutationFn: ({ follower_id, leader_id }: { follower_id: string; leader_id: string }) =>
       followUser(follower_id, leader_id),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries({queryKey});
     },
   });
 
@@ -26,7 +26,7 @@ const FollowUsers: React.FC<FollowUsersProps> = ({ user, users, queryKey }) => {
     mutationFn: ({ follower_id, leader_id }: { follower_id: string; leader_id: string }) =>
       unfollowUser(follower_id, leader_id),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKey);
+      queryClient.invalidateQueries({queryKey});
     },
   });
 

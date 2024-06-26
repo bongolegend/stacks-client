@@ -23,7 +23,7 @@ const Goals: React.FC = () => {
   const goalMutation = useMutation({
     mutationFn: updateGoalCompletion,
     onSuccess: () => {
-      queryClient.invalidateQueries(['goals', user?.id]);
+      queryClient.invalidateQueries({queryKey: ['goals', user?.id]});
     },
   });
 

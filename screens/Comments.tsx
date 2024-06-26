@@ -33,7 +33,7 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
     onSuccess: () => {
       refetch();
       setCommentText('');
-      queryClient.invalidateQueries(['comments', user?.id]);
+      queryClient.invalidateQueries({queryKey: ['comments', user?.id]});
     },
   });
 

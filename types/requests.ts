@@ -105,8 +105,8 @@ export const CommentEnriched = z.object({
 export type CommentEnriched = z.infer<typeof CommentEnriched>;
 
 export const FollowCounts = z.object({
-  follower_count: z.number(),
-  leader_count: z.number(),
+  followers: z.number(),
+  leaders: z.number(),
 }).strict().brand<"FollowCount">();
 
 export type FollowCounts = z.infer<typeof FollowCounts>;

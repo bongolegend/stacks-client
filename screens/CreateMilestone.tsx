@@ -18,7 +18,7 @@ const CreateMilestone: React.FC = () => {
   const mutation = useMutation({
     mutationFn: createGoal,
     onSuccess: () => {
-      queryClient.invalidateQueries(['goals']);
+      queryClient.invalidateQueries({queryKey: ['goals']});
       showNotification('Milestone created');
       navigation.goBack();
     },

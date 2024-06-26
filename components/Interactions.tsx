@@ -34,7 +34,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   const reactionMutation = useMutation({
     mutationFn: (emoji: EmojiType) => addReaction(user?.id!, item.id, emoji),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reactions', item.id]);
+      queryClient.invalidateQueries({queryKey: ['reactions', item.id]});
     },
   });
 

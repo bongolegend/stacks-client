@@ -28,7 +28,7 @@ const CreateGoal: React.FC = () => {
   const mutation = useMutation({
     mutationFn: createGoal,
     onSuccess: () => {
-      queryClient.invalidateQueries(['goals']);
+      queryClient.invalidateQueries({queryKey: ['goals']});
       showNotification('Goal Posted');
       navigation.goBack();
     },
