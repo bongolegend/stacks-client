@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchAnnouncements } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import Announcement from '../components/Announcement';
+import { GoalEnriched } from '../types/requests';
 
 
 const Announcements: React.FC = () => {
@@ -21,7 +22,7 @@ const Announcements: React.FC = () => {
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={announcements}
+          data={announcements?.sort((a: GoalEnriched, b: GoalEnriched) => new Date(b.updated_at) - new Date(a.updated_at))}
           renderItem={({ item }) => (
             <Announcement item={item} />
           )}
