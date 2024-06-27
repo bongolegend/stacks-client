@@ -57,7 +57,7 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
         {parent && <Text style={styles.goalTitle}>Goal: {parent.title}</Text>}
       </View>
       <FlatList
-        data={comments}
+        data={comments.sort((a, b) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime())}
         renderItem={({ item }) => (
           <View style={styles.commentItem}>
             <View style={styles.commentHeader}>

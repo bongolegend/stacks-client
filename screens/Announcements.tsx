@@ -22,7 +22,7 @@ const Announcements: React.FC = () => {
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={announcements?.sort((a: GoalEnriched, b: GoalEnriched) => new Date(b.updated_at) - new Date(a.updated_at))}
+          data={announcements?.sort((a: GoalEnriched, b: GoalEnriched) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())}
           renderItem={({ item }) => (
             <Announcement item={item} />
           )}
