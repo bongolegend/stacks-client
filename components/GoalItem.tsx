@@ -4,22 +4,26 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import { GoalEnriched } from '../types/requests';
 import { useNavigation } from '@react-navigation/native';
 import Interactions from '../components/Interactions';
+import { useUser } from '../contexts/UserContext';
 
 interface GoalItemProps {
   goal: GoalEnriched;
   milestones: GoalEnriched[];
   onOpenModal: (item: GoalEnriched) => void;
+  showButtons: boolean;
 }
 
-const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) => {
+const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal, showButtons }) => {
   const navigation = useNavigation();
 
   const renderMilestoneItem = ({ item }: { item: GoalEnriched }) => (
     <View style={styles.milestoneItem}>
-      <TouchableOpacity
-        style={[styles.completeButton, item.is_completed && styles.completedButton]}
-        onPress={() => onOpenModal(item)}
-      />
+      {showButtons && (
+        <TouchableOpacity
+          style={[styles.completeButton, item.is_completed && styles.completedButton]}
+          onPress={() => onOpenModal(item)}
+        />
+      )}
       <View style={styles.milestoneTextContainer}>
         <Text style={[styles.milestoneDescription, item.is_completed && styles.completedText]}>{item.description}</Text>
         <Text style={[styles.milestoneDate, item.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
@@ -35,10 +39,12 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
   return (
     <View style={styles.goalItem}>
       <View style={styles.goalContent}>
-        <TouchableOpacity
-          style={[styles.completeButton, goal.is_completed && styles.completedButton]}
-          onPress={() => onOpenModal(goal)}
-        />
+        {showButtons && (
+          <TouchableOpacity
+            style={[styles.completeButton, goal.is_completed && styles.completedButton]}
+            onPress={() => onOpenModal(goal)}
+          />
+        )}
         <View style={styles.goalTextContainer}>
           <Text style={[styles.goalTitle, goal.is_completed && styles.completedText]}>{goal.title}</Text>
           {goal.due_date && (
@@ -58,9 +64,11 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal }) =>
         nestedScrollEnabled={false}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
-      <TouchableOpacity style={styles.createMilestoneButton} onPress={handleCreateMilestone}>
-        <Text style={styles.createMilestoneButtonText}>+ Milestone</Text>
-      </TouchableOpacity>
+      {showButtons && (
+        <TouchableOpacity style={styles.createMilestoneButton} onPress={handleCreateMilestone}>
+          <Text style={styles.createMilestoneButtonText}>+ Milestone</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

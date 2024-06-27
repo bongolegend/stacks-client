@@ -1,36 +1,49 @@
-// Filename: screens/Goals.tsx
-import React, { useState, useMemo, useEffect } from 'react';
+// Filename: components/Goals.tsx
+import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, updateGoalCompletion, fetchFollowCounts } from '../services/api';
+import { fetchGoals, updateGoalCompletion, fetchFollowCounts, fetchUser } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
 import CompletionModal from '../components/CompletionModal';
-import { GoalEnriched, FollowCounts } from '../types/requests';
+import { GoalEnriched } from '../types/requests';
 
-const Goals: React.FC = () => {
-  const { user } = useUser();
+interface GoalsProps {
+  route: {
+    params: {
+      userId: string;
+      enableEdits: boolean;
+    };
+  };
+}
+const Goals: React.FC<GoalsProps> = ({ route }) => {
+  const { userId, enableEdits } = route.params;
   const queryClient = useQueryClient();
   const [selectedItem, setSelectedItem] = useState<GoalEnriched | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [followCounts, setFollowCounts] = useState<FollowCounts>(FollowCounts.parse({ followers: 0, leaders: 0 }));
 
-  const { data: goals, isLoading: goalsLoading } = useQuery({
-    queryKey: ['goals', user?.id],
-    queryFn: () => fetchGoals(user!.id),
-    enabled: !!user,
+  const { data: displayedUser, isLoading: userLoading } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+    enabled: !!userId,
   });
 
-  useEffect(() => {
-    if (user) {
-      fetchFollowCounts(user.id).then(counts => setFollowCounts(counts));
-    }
-  }, [user]);
+  const { data: goals, isLoading: goalsLoading } = useQuery({
+    queryKey: ['goals', userId],
+    queryFn: () => fetchGoals(userId),
+    enabled: !!userId,
+  });
+
+  const { data: followCounts, isLoading: followCountsLoading } = useQuery({
+    queryKey: ['followCounts', userId],
+    queryFn: () => fetchFollowCounts(userId),
+    enabled: !!userId,
+  });
 
   const goalMutation = useMutation({
     mutationFn: updateGoalCompletion,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['goals', userId] });
     },
   });
 
@@ -56,7 +69,7 @@ const Goals: React.FC = () => {
 
   const stats = useMemo(() => {
     if (!goals) return { activeGoals: 0, completedGoals: 0, activeMilestones: 0, completedMilestones: 0 };
-    
+
     const activeGoals = goals.filter(goal => !goal.is_completed && goal.parent_id === null).length;
     const completedGoals = goals.filter(goal => goal.is_completed && goal.parent_id === null).length;
     const activeMilestones = goals.filter(goal => !goal.is_completed && goal.parent_id !== null).length;
@@ -67,15 +80,15 @@ const Goals: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {goalsLoading ? (
+      {userLoading || goalsLoading || followCountsLoading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
           ListHeaderComponent={
             <View style={styles.header}>
-              <Text style={styles.username}>{user?.username}</Text>
-              <Text style={styles.joinedDate}>Joined on {new Date(user?.created_at).toLocaleDateString()}</Text>
-              <Text style={styles.followStats}>{followCounts.followers} Followers     {followCounts.leaders} Following</Text>
+              <Text style={styles.username}>{displayedUser?.username}</Text>
+              <Text style={styles.joinedDate}>Joined on {new Date(displayedUser?.created_at).toLocaleDateString()}</Text>
+              <Text style={styles.followStats}>{followCounts?.followers} Followers     {followCounts?.leaders} Following</Text>
               <Text style={styles.stats}>Active Goals: {stats.activeGoals}</Text>
               <Text style={styles.stats}>Completed Goals: {stats.completedGoals}</Text>
               <Text style={styles.stats}>Active Milestones: {stats.activeMilestones}</Text>
@@ -89,6 +102,7 @@ const Goals: React.FC = () => {
               goal={item} 
               milestones={goals?.filter(goal => goal.parent_id === item.id)} 
               onOpenModal={handleOpenModal}
+              showButtons={enableEdits}
             />
           )}
           keyExtractor={(item) => item.id}

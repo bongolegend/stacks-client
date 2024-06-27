@@ -16,6 +16,16 @@ export const createUser = async (user: User): Promise<User> => {
   return parsed.data;
 };
 
+export const fetchUser = async (id: string): Promise<User> => {
+  const { data } = await api.get(`/0/users/${id}`);
+  const parsed = User.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing User:', parsed.error.format());
+    throw new Error('Error parsing User');
+  }
+  return parsed.data;
+}
+
 export const loginUser = async (username: string): Promise<User> => {
   const { data } = await api.get(`/0/users?username=${username}`);
   const parsed = User.safeParse(data[0]);
