@@ -10,9 +10,9 @@ Install deps.
 Start the dev server.
 ```npx expo start```
 
-### bundle for web
-Create bundle.
-```npx expo export -p web --output-dir dist.$(date +%Y-%m-%d):$(git rev-parse --short HEAD)```
+### deploy
+change config.ts to point to the right api, then:
+```./deploy.sh```
 
 Run bundle locally.
 ```npx serve dist -l 8081```

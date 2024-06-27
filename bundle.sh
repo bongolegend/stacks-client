@@ -1,1 +1,0 @@
-npx expo export -p web --output-dir dist.$(date +%Y-%m-%d):$(git rev-parse --short HEAD)
