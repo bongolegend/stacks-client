@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { followUser, unfollowUser } from '../services/api';
-import { User, Follow } from '../types/requests';
+import { User } from '../types/requests';
+import { useNavigation } from '@react-navigation/native';
 
 interface FollowUsersProps {
   user: User;
@@ -12,6 +13,7 @@ interface FollowUsersProps {
 
 const FollowUsers: React.FC<FollowUsersProps> = ({ user, users, queryKey }) => {
   const queryClient = useQueryClient();
+  const navigation = useNavigation();
 
 
   const followMutation = useMutation({
@@ -45,7 +47,9 @@ const FollowUsers: React.FC<FollowUsersProps> = ({ user, users, queryKey }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('OtherUserGoals', { userId: item.id, enableEdits: false })}>
             <Text>{item.username}</Text>
+            </TouchableOpacity>
             <Button
               title={item.leader ? 'Unfollow' : 'Follow'}
               onPress={() => handleFollowToggle(item)}
