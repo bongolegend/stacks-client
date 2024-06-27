@@ -5,13 +5,13 @@ import { fetchGoals, updateGoalCompletion } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
 import CompletionModal from '../components/CompletionModal';
-import { Goal } from '../types/requests';
+import { GoalEnriched } from '../types/requests';
 
 
 const Goals: React.FC = () => {
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const [selectedItem, setSelectedItem] = useState<Goal | null>(null);
+  const [selectedItem, setSelectedItem] = useState<GoalEnriched | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const { data: goals, isLoading: goalsLoading } = useQuery({
@@ -28,7 +28,7 @@ const Goals: React.FC = () => {
   });
 
 
-  const handleOpenModal = (item: Goal ) => {
+  const handleOpenModal = (item: GoalEnriched ) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
@@ -56,7 +56,7 @@ const Goals: React.FC = () => {
       ) : (
         <FlatList
           data={goals?.filter(goal => goal.parent_id === null
-          ).sort((a, b) => a.is_completed - b.is_completed)}
+          ).sort((a, b) => Number(a.is_completed) - Number(b.is_completed))}
           renderItem={({ item }) => (
             <GoalItem 
               goal={item} 
