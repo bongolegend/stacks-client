@@ -32,6 +32,12 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     enabled: !!userId,
   });
 
+  const { data: followCounts } = useQuery({
+    queryKey: ['followCounts', userId],
+    queryFn: () => fetchFollowCounts(userId),
+    enabled: !!userId,
+  });
+
   const { data: goals, isLoading: goalsLoading } = useQuery({
     queryKey: ['goals', userId],
     queryFn: () => fetchGoals(userId),
@@ -105,6 +111,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
             <View style={styles.header}>
               <Text style={styles.username}>{displayedUser?.username}</Text>
               <Text style={styles.joinedDate}>Joined on {new Date(displayedUser?.created_at).toLocaleDateString()}</Text>
+              <Text style={styles.followCounts}>{followCounts?.followers} Followers    {followCounts?.leaders} Following</Text>
               <Text style={styles.stats}>Active Goals: {stats.activeGoals}</Text>
               <Text style={styles.stats}>Completed Goals: {stats.completedGoals}</Text>
               <Text style={styles.stats}>Active Milestones: {stats.activeMilestones}</Text>
@@ -182,6 +189,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'stretch',
     color: 'grey',
+    marginBottom: 8,
+  },
+  followCounts: {
+    fontSize: 16,
+    color: 'grey',
+    textAlign: 'center',
+    alignSelf: 'stretch',
     marginBottom: 8,
   },
   stats: {
