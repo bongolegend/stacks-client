@@ -1,10 +1,10 @@
-// Filename: components/Goals.tsx
 import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, updateGoalCompletion, fetchFollowCounts, fetchUser } from '../services/api';
+import { fetchGoals, updateGoalCompletion, fetchFollowCounts, fetchUser, fetchReactions, fetchCommentCounts } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
+import MilestoneItem from '../components/MilestoneItem';
 import CompletionModal from '../components/CompletionModal';
 import { GoalEnriched } from '../types/requests';
 
@@ -16,6 +16,7 @@ interface GoalsProps {
     };
   };
 }
+
 const Goals: React.FC<GoalsProps> = ({ route }) => {
   const { userId, enableEdits } = route.params;
   const queryClient = useQueryClient();
@@ -34,10 +35,18 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     enabled: !!userId,
   });
 
-  const { data: followCounts, isLoading: followCountsLoading } = useQuery({
-    queryKey: ['followCounts', userId],
-    queryFn: () => fetchFollowCounts(userId),
-    enabled: !!userId,
+  const goalIds = goals?.map((goal) => goal.id) || [];
+
+  const { data: reactions, isLoading: reactionsLoading } = useQuery({
+    queryKey: ['reactions', 'goals'],
+    queryFn: () => fetchReactions(goalIds),
+    enabled: !!goalIds.length,
+  });
+
+  const { data: commentCounts, isLoading: commentCountsLoading } = useQuery({
+    queryKey: ['commentCounts', 'goals'],
+    queryFn: () => fetchCommentCounts(goalIds),
+    enabled: !!goalIds.length,
   });
 
   const goalMutation = useMutation({
@@ -78,17 +87,17 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     return { activeGoals, completedGoals, activeMilestones, completedMilestones };
   }, [goals]);
 
+  if (userLoading || goalsLoading || reactionsLoading || commentCountsLoading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <View style={styles.container}>
-      {userLoading || goalsLoading || followCountsLoading ? (
-        <Text>Loading...</Text>
-      ) : (
         <FlatList
           ListHeaderComponent={
             <View style={styles.header}>
               <Text style={styles.username}>{displayedUser?.username}</Text>
               <Text style={styles.joinedDate}>Joined on {new Date(displayedUser?.created_at).toLocaleDateString()}</Text>
-              <Text style={styles.followStats}>{followCounts?.followers} Followers     {followCounts?.leaders} Following</Text>
               <Text style={styles.stats}>Active Goals: {stats.activeGoals}</Text>
               <Text style={styles.stats}>Completed Goals: {stats.completedGoals}</Text>
               <Text style={styles.stats}>Active Milestones: {stats.activeMilestones}</Text>
@@ -96,20 +105,36 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
             </View>
           }
           data={goals?.filter(goal => goal.parent_id === null
-            ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()  
+            ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             ).sort((a, b) => Number(a.is_completed) - Number(b.is_completed))}
           renderItem={({ item }) => (
-            <GoalItem 
-              goal={item} 
-              milestones={goals?.filter(goal => goal.parent_id === item.id)} 
-              onOpenModal={handleOpenModal}
-              showButtons={enableEdits}
-            />
+            <View>
+              <GoalItem 
+                goal={item} 
+                onOpenModal={handleOpenModal}
+                showButtons={enableEdits}
+                reactions={reactions[item.id] || []}
+                commentCount={commentCounts.find(count => count.goal_id === item.id)}
+              />
+              <FlatList
+                data={goals.filter(goal => goal.parent_id === item.id)}
+                renderItem={({ item: milestone }) => (
+                  <MilestoneItem
+                    milestone={milestone}
+                    onOpenModal={handleOpenModal}
+                    showButtons={enableEdits}
+                    reactions={reactions[milestone.id] || []}
+                    commentCount={commentCounts.find(count => count.goal_id === milestone.id)}
+                  />
+                )}
+                keyExtractor={(milestone) => milestone.id}
+                nestedScrollEnabled={false}
+              />
+            </View>
           )}
           keyExtractor={(item) => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
-      )}
       {selectedItem && (
         <CompletionModal
           visible={modalVisible}
@@ -141,13 +166,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   joinedDate: {
-    fontSize: 16,
-    textAlign: 'center',
-    alignSelf: 'stretch',
-    color: 'grey',
-    marginBottom: 8,
-  },
-  followStats: {
     fontSize: 16,
     textAlign: 'center',
     alignSelf: 'stretch',

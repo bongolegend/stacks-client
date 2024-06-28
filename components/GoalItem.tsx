@@ -1,40 +1,17 @@
-// Filename: components/GoalItem.tsx
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { GoalEnriched } from '../types/requests';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { GoalEnriched, Reaction, CommentCount } from '../types/requests';
 import Interactions from '../components/Interactions';
-import { useUser } from '../contexts/UserContext';
 
 interface GoalItemProps {
   goal: GoalEnriched;
-  milestones: GoalEnriched[];
   onOpenModal: (item: GoalEnriched) => void;
   showButtons: boolean;
+  reactions: Reaction[];
+  commentCount: CommentCount;
 }
 
-const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal, showButtons }) => {
-  const navigation = useNavigation();
-
-  const renderMilestoneItem = ({ item }: { item: GoalEnriched }) => (
-    <View style={styles.milestoneItem}>
-      {showButtons && (
-        <TouchableOpacity
-          style={[styles.completeButton, item.is_completed && styles.completedButton]}
-          onPress={() => onOpenModal(item)}
-        />
-      )}
-      <View style={styles.milestoneTextContainer}>
-        <Text style={[styles.milestoneDescription, item.is_completed && styles.completedText]}>{item.description}</Text>
-        <Text style={[styles.milestoneDate, item.is_completed && styles.completedText]}>{new Date(item.created_at).toLocaleDateString()}</Text>
-        <Interactions item={item} />
-      </View>
-    </View>
-  );
-
-  const handleCreateMilestone = () => {
-    navigation.navigate('CreateMilestone', { goalId: goal.id });
-  };
+const GoalItem: React.FC<GoalItemProps> = ({ goal, onOpenModal, showButtons, reactions, commentCount }) => {
 
   return (
     <View style={styles.goalItem}>
@@ -53,22 +30,9 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, milestones, onOpenModal, show
             </Text>
           )}
           <Text style={[styles.goalDescription, goal.is_completed && styles.completedText]}>{goal.description}</Text>
-          <Interactions item={goal} />
+          <Interactions goal={goal} reactions={reactions} commentCount={commentCount} />
         </View>
       </View>
-      <View style={styles.separator} />
-      <FlatList
-        data={milestones}
-        renderItem={renderMilestoneItem}
-        keyExtractor={(milestone) => milestone.id}
-        nestedScrollEnabled={false}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
-      {showButtons && (
-        <TouchableOpacity style={styles.createMilestoneButton} onPress={handleCreateMilestone}>
-          <Text style={styles.createMilestoneButtonText}>+ Milestone</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
@@ -87,16 +51,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1,
   },
-  milestoneItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 32,
-    marginBottom: 8,
-  },
-  milestoneTextContainer: {
-    marginLeft: 8,
-    flex: 1,
-  },
   goalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -111,14 +65,6 @@ const styles = StyleSheet.create({
   },
   goalDescription: {
     fontSize: 16,
-  },
-  milestoneDescription: {
-    fontSize: 16,
-  },
-  milestoneDate: {
-    fontSize: 12,
-    color: 'gray',
-    textAlign: 'right',
   },
   completeButton: {
     width: 20,
@@ -139,24 +85,5 @@ const styles = StyleSheet.create({
   },
   completedText: {
     color: 'darkgray',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#ccc',
-    marginVertical: 8,
-  },
-  createMilestoneButton: {
-    backgroundColor: '#d3d3d3',
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    alignSelf: 'flex-start',
-    marginTop: 8,
-    marginLeft: 32, // Align with milestone complete buttons
-  },
-  createMilestoneButtonText: {
-    fontSize: 16,
-    color: 'darkgrey',
-    fontWeight: 'bold',
   },
 });
