@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Announcement, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched } from '../types/requests';
+import { User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -202,5 +202,15 @@ export const fetchFollowCounts = async (user_id: string): Promise<FollowCount> =
     console.error('Error parsing FollowCount:', parsed.error.format());
     throw new Error('Error parsing FollowCount');
   }
-  return data;
+  return parsed.data;
 };
+
+export const fetchCommentCount = async (goal_id: string): Promise<CommentCount> => {
+  const { data } = await api.get(`/0/comments/count?goal_id=${goal_id}`);
+  const parsed = CommentCount.safeParse(data);
+  if (!parsed.success) {
+    console.error('Error parsing CommentCount:', parsed.error.format());
+    throw new Error('Error parsing CommentCount');
+  }
+  return parsed.data;
+}

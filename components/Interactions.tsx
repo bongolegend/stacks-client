@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { addReaction, fetchReactions, fetchComments } from '../services/api';
+import { addReaction, fetchReactions, fetchCommentCount } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -25,9 +25,9 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
     enabled: !!item.id,
   });
 
-  const { data: comments, isLoading: commentsLoading } = useQuery({
-    queryFn: () => fetchComments(item.id),
-    queryKey: ['comments', item.id],
+  const { data: commentCount, isLoading: commentsLoading } = useQuery({
+    queryFn: () => fetchCommentCount(item.id),
+    queryKey: ['commentCount', item.id],
     enabled: !!item.id,
   });
 
@@ -59,8 +59,6 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
     return <Text>Loading...</Text>;
   }
 
-  const comment_count = comments ? comments.length : 0;
-
   // Group reactions by emoji
   const groupedReactions = reactions.reduce((acc: { [key: string]: number }, reaction) => {
     const emoji = reaction.reaction.emoji;
@@ -88,7 +86,7 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
         </TouchableOpacity>
         <TouchableOpacity onPress={handleOpenComments} style={styles.transparentButton}>
           <FontAwesome5 name="comment-alt" size={18} color="grey" />
-          <Text style={styles.commentCount}>{comment_count}</Text>
+          <Text style={styles.commentCount}>{commentCount?.count}</Text>
         </TouchableOpacity>
       </View>
       <EmojiPicker open={emojiPickerVisible} onClose={() => setEmojiPickerVisible(false)} onEmojiSelected={handleSelectEmoji} />

@@ -110,3 +110,10 @@ export const FollowCounts = z.object({
 }).strict().brand<"FollowCounts">();
 
 export type FollowCounts = z.infer<typeof FollowCounts>;
+
+export const CommentCount = z.object({
+  goal_id: z.string(),
+  count: z.number(),
+}).strict().brand<"CommentCount">();
+
+export type CommentCount = z.infer<typeof CommentCount>;
