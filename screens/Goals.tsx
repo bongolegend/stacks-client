@@ -7,6 +7,8 @@ import GoalItem from '../components/GoalItem';
 import MilestoneItem from '../components/MilestoneItem';
 import CompletionModal from '../components/CompletionModal';
 import { GoalEnriched } from '../types/requests';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 interface GoalsProps {
   route: {
@@ -22,6 +24,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
   const queryClient = useQueryClient();
   const [selectedItem, setSelectedItem] = useState<GoalEnriched | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const { data: displayedUser, isLoading: userLoading } = useQuery({
     queryKey: ['user', userId],
@@ -75,6 +78,10 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
       handleCloseModal();
     }
   };
+  const handleCreateMilestone = (goalId: string) => {
+    navigation.navigate('CreateMilestone', { goalId });
+  };
+
 
   const stats = useMemo(() => {
     if (!goals) return { activeGoals: 0, completedGoals: 0, activeMilestones: 0, completedMilestones: 0 };
@@ -129,7 +136,12 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
                 )}
                 keyExtractor={(milestone) => milestone.id}
                 nestedScrollEnabled={false}
-              />
+                ListFooterComponent={
+                  enableEdits && (
+                  <TouchableOpacity style={styles.createMilestoneButton} onPress={() => handleCreateMilestone(item.id)}>
+                    <Text style={styles.createMilestoneButtonText}>+ Milestone</Text>
+                  </TouchableOpacity>)}
+                />
             </View>
           )}
           keyExtractor={(item) => item.id}
@@ -184,4 +196,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     marginVertical: 8,
   },
+  createMilestoneButton: {
+    backgroundColor: '#03A9F4',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    marginLeft: 32,
+    },
+    createMilestoneButtonText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+    },
 });
