@@ -6,14 +6,12 @@ import { GoalEnriched, Reaction, CommentCount } from '../types/requests';
 import Interactions from './Interactions';
 
 interface AnnouncementProps {
-  item: {
     goal: GoalEnriched;
     reactions: Reaction[];
     commentCount: CommentCount;
-  };
 }
 
-const Announcement: React.FC<AnnouncementProps> = ({ item: { goal, reactions, commentCount }}) => {
+const Announcement: React.FC<AnnouncementProps> = ({ goal, reactions, commentCount }) => {
   const navigation = useNavigation();
   const parent = goal.parent;
 

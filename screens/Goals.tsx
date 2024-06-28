@@ -114,7 +114,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
                 onOpenModal={handleOpenModal}
                 showButtons={enableEdits}
                 reactions={reactions[item.id] || []}
-                commentCount={commentCounts.find(count => count.goal_id === item.id)}
+                commentCount={commentCounts.find(count => count.goal_id === item.id) || { goal_id: item.id, count: 0 }}
               />
               <FlatList
                 data={goals.filter(goal => goal.parent_id === item.id)}
@@ -124,7 +124,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
                     onOpenModal={handleOpenModal}
                     showButtons={enableEdits}
                     reactions={reactions[milestone.id] || []}
-                    commentCount={commentCounts.find(count => count.goal_id === milestone.id)}
+                    commentCount={commentCounts.find(count => count.goal_id === milestone.id) || { goal_id: milestone.id, count: 0 }}
                   />
                 )}
                 keyExtractor={(milestone) => milestone.id}

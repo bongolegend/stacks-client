@@ -45,24 +45,18 @@ const Announcements: React.FC = () => {
     );
   }
 
-  const combinedData = goals.map((goal) => {
-    const reactionsForAnnouncement = reactions[goal.id];
-    const commentCount = commentCounts.find((count) => count.goal_id === goal.id);
-    return {
-      goal,
-      reactions: reactionsForAnnouncement ? reactionsForAnnouncement : [],
-      commentCount: commentCount,
-    };
-  });
-
   return (
     <View style={styles.container}>
       <FlatList
-        data={combinedData.sort((a, b) => new Date(b.goal.updated_at).getTime() - new Date(a.goal.updated_at).getTime())}
+        data={goals.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())}
         renderItem={({ item }) => (
-          <Announcement item={item} />
+          <Announcement
+            goal={item}
+            reactions={reactions[item.id] || []}
+            commentCount={commentCounts.find((count) => count.goal_id === item.id) || {goal_id: item.id, count: 0 }}
+            />
         )}
-        keyExtractor={(item) => item.goal.id}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );

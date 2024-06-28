@@ -44,10 +44,6 @@ const Interactions: React.FC<InteractionsProps> = ({ goal, reactions, commentCou
     navigation.navigate('Comments', { goal });
   };
 
-  if (!reactions || !commentCount) {
-    return <Text>Loading...</Text>;
-  }
-
 
   // Group reactions by emoji
   const groupedReactions = reactions.reduce((acc: { [key: string]: number }, reaction) => {
