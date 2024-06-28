@@ -96,7 +96,8 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
             </View>
           }
           data={goals?.filter(goal => goal.parent_id === null
-          ).sort((a, b) => Number(a.is_completed) - Number(b.is_completed))}
+            ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()  
+            ).sort((a, b) => Number(a.is_completed) - Number(b.is_completed))}
           renderItem={({ item }) => (
             <GoalItem 
               goal={item} 
