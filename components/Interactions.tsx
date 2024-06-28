@@ -2,39 +2,28 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import EmojiPicker, { EmojiType } from 'rn-emoji-keyboard';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { addReaction, fetchReactions, fetchCommentCount } from '../services/api';
+import { addReaction } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { GoalEnriched } from '../types/requests';
+import { GoalEnriched, Reaction, CommentCount } from '../types/requests';
 
 interface InteractionsProps {
-  item: GoalEnriched;
+  goal: GoalEnriched;
+  reactions: Reaction[];
+  commentCount: CommentCount;
 }
 
-const Interactions: React.FC<InteractionsProps> = ({ item }) => {
+const Interactions: React.FC<InteractionsProps> = ({ goal, reactions, commentCount }) => {
   const { user } = useUser();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(false);
 
-  // TODO prevent all the queries from being re-fetched when a new reaction is added
-  const { data: reactions, isLoading: reactionsLoading } = useQuery({
-    queryFn: () => fetchReactions(item.id),
-    queryKey: ['reactions', item.id],
-    enabled: !!item.id,
-  });
-
-  const { data: commentCount, isLoading: commentsLoading } = useQuery({
-    queryFn: () => fetchCommentCount(item.id),
-    queryKey: ['commentCount', item.id],
-    enabled: !!item.id,
-  });
-
   const reactionMutation = useMutation({
-    mutationFn: (emoji: EmojiType) => addReaction(user?.id!, item.id, emoji),
+    mutationFn: (emoji: EmojiType) => addReaction(user?.id!, goal.id, emoji),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['reactions', item.id]});
+      queryClient.invalidateQueries({queryKey: ['reactions']});
     },
   });
 
@@ -52,12 +41,13 @@ const Interactions: React.FC<InteractionsProps> = ({ item }) => {
   };
 
   const handleOpenComments = () => {
-    navigation.navigate('Comments', { goal: item });
+    navigation.navigate('Comments', { goal });
   };
 
-  if (reactionsLoading || commentsLoading) {
+  if (!reactions || !commentCount) {
     return <Text>Loading...</Text>;
   }
+
 
   // Group reactions by emoji
   const groupedReactions = reactions.reduce((acc: { [key: string]: number }, reaction) => {

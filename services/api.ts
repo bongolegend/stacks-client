@@ -115,19 +115,28 @@ export const addReaction = async (userId: string, goalId: string, emoji: EmojiTy
   return parsed.data;
 };
 
-export const fetchReactions = async (goalId: string): Promise<Reaction[]> => {
-  const { data } = await api.get(`/0/reactions?goal_id=${goalId}`);
-  const reactions = data.map((reaction: any) => {
-    const parsed = Reaction.safeParse(reaction);
-    if (!parsed.success) {
-      console.error('Error parsing Reaction:', parsed.error.format());
-      return null;
-    } else {
-      return parsed.data;
+export const fetchReactions = async (goalIds: string[]): Promise<{ [key: string]: Reaction[] }> => {
+  const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
+  const { data } = await api.get(`/0/reactions?${queryString}`);
+
+  const parsedReactions: { [key: string]: Reaction[] } = {};
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      parsedReactions[key] = data[key].map((reaction: any) => {
+        const parsed = Reaction.safeParse(reaction);
+        if (!parsed.success) {
+          console.error('Error parsing Reaction:', parsed.error.format());
+          return null;
+        } else {
+          return parsed.data;
+        }
+      }).filter((reaction): reaction is Reaction => reaction !== null);
     }
-  });
-  return reactions;
-}
+  }
+
+  return parsedReactions;
+};
 
 export const addComment = async (comment: Comment): Promise<Comment> => {
   const { data } = await api.post(`/0/comments`, comment);
@@ -213,4 +222,19 @@ export const fetchCommentCount = async (goal_id: string): Promise<CommentCount> 
     throw new Error('Error parsing CommentCount');
   }
   return parsed.data;
+}
+
+export const fetchCommentCounts = async (goalIds: string[]): Promise<CommentCount[]> => {
+  const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
+  const { data } = await api.get(`/0/comments/count?${queryString}`);
+  const counts = data.map((count: any) => {
+    const parsed = CommentCount.safeParse(count);
+    if (!parsed.success) {
+      console.error('Error parsing CommentCount:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return counts;
 }
