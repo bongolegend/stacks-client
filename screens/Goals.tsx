@@ -62,6 +62,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     mutationFn: updateGoalCompletion,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals', userId] });
+      queryClient.invalidateQueries({queryKey: ['announcements']});
     },
   });
 
