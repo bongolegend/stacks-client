@@ -34,6 +34,7 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
       refetch();
       setCommentText('');
       queryClient.invalidateQueries({queryKey: ['comments', user?.id]});
+      queryClient.invalidateQueries({queryKey: ['commentCounts']});
     },
   });
 
