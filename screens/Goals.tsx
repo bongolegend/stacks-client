@@ -32,7 +32,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     enabled: !!userId,
   });
 
-  const { data: followCounts } = useQuery({
+  const { data: followCounts, isLoading: followCountsLoading } = useQuery({
     queryKey: ['followCounts', userId],
     queryFn: () => fetchFollowCounts(userId),
     enabled: !!userId,
@@ -100,7 +100,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
     return { activeGoals, completedGoals, activeMilestones, completedMilestones };
   }, [goals]);
 
-  if (userLoading || goalsLoading || reactionsLoading || commentCountsLoading) {
+  if (userLoading || goalsLoading || reactionsLoading || commentCountsLoading || followCountsLoading) {
     return <Text>Loading...</Text>;
   }
 
