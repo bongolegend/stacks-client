@@ -11,7 +11,9 @@ const HeaderBar: React.FC = () => {
       <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={styles.avatarIcon}>
         <FontAwesome5 name="user-circle" size={30} color="darkgrey" />
       </TouchableOpacity>
-      <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
+      <TouchableOpacity onPress={() => navigation.navigate('Timeline')}>
+        <Image source={require('../assets/stackabrick.png')} style={styles.logo} />
+      </TouchableOpacity>
     </View>
   );
 };
