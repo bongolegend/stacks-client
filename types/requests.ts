@@ -10,7 +10,7 @@ export const User = z.object({
   updated_at: z.string(),
   follower: z.union([z.boolean(), z.null()]).optional(),
   leader: z.union([z.boolean(), z.null()]).optional(),
-}).strict().brand<"User">();
+}).strict();
 
 export type User = z.infer<typeof User>;
 
@@ -24,7 +24,7 @@ export const Goal = z.object({
     due_date: z.union([z.string(), z.null()]),
     created_at: z.string(),
     updated_at: z.string(),
-  }).strict().brand<"Goal">();
+  }).strict();
   
 export type Goal = z.infer<typeof Goal>;
 
@@ -40,7 +40,7 @@ export const GoalEnriched = z.object({
   due_date: z.union([z.string(), z.null()]),
   created_at: z.string(),
   updated_at: z.string(),
-}).strict().brand<"GoalEnriched">();
+}).strict();
 
 export type GoalEnriched = z.infer<typeof GoalEnriched>;
 
@@ -53,7 +53,7 @@ export const EmojiType = z.object({
   unicode_version: z.string(),
   toneEnabled: z.boolean(),
   alreadySelected: z.boolean().optional(),
-}).strict().brand<"EmojiType">();
+}).strict();
 
 export type EmojiType = z.infer<typeof EmojiType>;
 
@@ -65,7 +65,7 @@ export const Reaction = z.object({
   goal_id: z.union([z.string(), z.null()]),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
-}).strict().brand<"Reaction">();
+}).strict();
 
 export type Reaction = z.infer<typeof Reaction>;
 
@@ -78,7 +78,7 @@ export const Announcement = z.object({
   comment_count: z.number(),
   sort_on: z.string(),
   created_at: z.string(),
-}).strict().brand<"Announcement">();
+}).strict();
 
 export type Announcement = z.infer<typeof Announcement>;
 
@@ -88,7 +88,7 @@ export const Follow = z.object({
   leader_id: z.string(),
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
-}).strict().brand<"Follow">();
+}).strict();
 
 export type Follow = z.infer<typeof Follow>;
 
@@ -100,14 +100,14 @@ export const CommentEnriched = z.object({
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
   user: User.optional(),
-}).strict().brand<"CommentEnriched">();
+}).strict();
 
 export type CommentEnriched = z.infer<typeof CommentEnriched>;
 
 export const FollowCounts = z.object({
   followers: z.number(),
   leaders: z.number(),
-}).strict().brand<"FollowCounts">();
+}).strict();
 
 export type FollowCounts = z.infer<typeof FollowCounts>;
 

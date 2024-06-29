@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, Button, KeyboardAvoidingView, Platform } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchComments, addComment } from '../services/api';
+import { fetchComments, addComment, updateUnreadComments } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import { Announcement, CommentEnriched, GoalEnriched } from '../types/requests';
 
@@ -21,19 +21,25 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
 
   const parent = goal.parent;
 
-  const { data: comments, refetch } = useQuery({
+
+  const { data: comments } = useQuery({
     queryKey: ['comments', goal.id],
-    queryFn: () => fetchComments(goal.id),
-    initialData: [],
+    queryFn: async () => {
+      const comments = await fetchComments(goal.id);
+      const ids = comments.map((comment) => comment.id);
+      updateUnreadComments(user?.id, ids).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['unreadCommentCount'] });
+      });
+      return comments;
+    },
+    initialData: []
   });
 
   const commentMutation = useMutation({
-    mutationFn: (comment: Comment) =>
-      addComment(comment),
+    mutationFn: addComment,
     onSuccess: () => {
-      refetch();
       setCommentText('');
-      queryClient.invalidateQueries({queryKey: ['comments', user?.id]});
+      queryClient.invalidateQueries({queryKey: ['comments', goal.id]});
       queryClient.invalidateQueries({queryKey: ['commentCounts']});
     },
   });

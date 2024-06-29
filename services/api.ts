@@ -138,7 +138,7 @@ export const fetchReactions = async (goalIds: string[]): Promise<{ [key: string]
   return parsedReactions;
 };
 
-export const addComment = async (comment: Comment): Promise<Comment> => {
+export const addComment = async (comment: CommentEnriched): Promise<CommentEnriched> => {
   const { data } = await api.post(`/0/comments`, comment);
   const parsed = CommentEnriched.safeParse(data);
   if (!parsed.success) {
@@ -247,4 +247,9 @@ export const fetchUnreadCommentCount = async (user_id: string): Promise<number> 
   };
 
   return data;
+}
+
+
+export const updateUnreadComments = async (user_id: string, comment_ids: string[]): Promise<void> => {
+  await api.patch(`/0/comments/unread`, { user_id, comment_ids });
 }

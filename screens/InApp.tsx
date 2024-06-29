@@ -58,7 +58,7 @@ const InApp: React.FC = () => {
                 {route.name === 'Notifications' && unreadCount > 0 && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {unreadCount > 99 ? '99+' : unreadCount}
                     </Text>
                   </View>
                 )}
