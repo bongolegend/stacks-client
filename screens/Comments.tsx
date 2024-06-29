@@ -29,6 +29,7 @@ const Comments: React.FC<CommentsProps> = ({ route }) => {
       const ids = comments.map((comment) => comment.id);
       updateUnreadComments(user?.id, ids).then(() => {
         queryClient.invalidateQueries({ queryKey: ['unreadCommentCount'] });
+        queryClient.invalidateQueries({ queryKey: ['unreadComments'] });
       });
       return comments;
     },

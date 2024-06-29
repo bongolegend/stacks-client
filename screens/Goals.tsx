@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchGoals, updateGoalCompletion, fetchFollowCounts, fetchUser, fetchReactions, fetchCommentCounts } from '../services/api';
+import { fetchGoalsByUser, updateGoalCompletion, fetchFollowCounts, fetchUser, fetchReactions, fetchCommentCounts } from '../services/api';
 import { useUser } from '../contexts/UserContext';
 import GoalItem from '../components/GoalItem';
 import MilestoneItem from '../components/MilestoneItem';
@@ -40,7 +40,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
 
   const { data: goals, isLoading: goalsLoading } = useQuery({
     queryKey: ['goals', userId],
-    queryFn: () => fetchGoals(userId),
+    queryFn: () => fetchGoalsByUser(userId),
     enabled: !!userId,
   });
 

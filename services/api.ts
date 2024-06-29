@@ -46,8 +46,8 @@ export const createGoal = async (goal: Goal): Promise<Goal> => {
   return parsed.data;
 };
 
-export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
-  const { data } = await api.get(`/0/goals/${user_id}`);
+export const fetchGoalsByUser = async (user_id: string): Promise<GoalEnriched[]> => {
+  const { data } = await api.get(`/0/goals?user_id=${user_id}`);
   const goals = data.map((goal: any) => {
     const parsed = GoalEnriched.safeParse(goal);
     if (!parsed.success) {
@@ -59,6 +59,22 @@ export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
   });
   return goals;
 };
+
+export const fetchGoals = async (goalIds: string[]): Promise<GoalEnriched[]> => {
+  const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
+  const { data } = await api.get(`/0/goals?${queryString}`);
+  const goals = data.map((goal: any) => {
+    const parsed = GoalEnriched.safeParse(goal);
+    if (!parsed.success) {
+      console.error('Error parsing Goal:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return goals;
+};
+
 
 export const fetchAnnouncements = async (user_id: string): Promise<GoalEnriched[]> => {
   const { data } = await api.get(`/0/goals/announcements/${user_id}`);
@@ -252,4 +268,18 @@ export const fetchUnreadCommentCount = async (user_id: string): Promise<number> 
 
 export const updateUnreadComments = async (user_id: string, comment_ids: string[]): Promise<void> => {
   await api.patch(`/0/comments/unread`, { user_id, comment_ids });
+}
+
+export const fetchUnreadComments = async (user_id: string): Promise<CommentEnriched[]> => {
+  const { data } = await api.get(`/0/comments/unread?user_id=${user_id}`);
+  const comments = data.map((comment: any) => {
+    const parsed = CommentEnriched.safeParse(comment);
+    if (!parsed.success) {
+      console.error('Error parsing Comment:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return comments;
 }
