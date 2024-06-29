@@ -238,3 +238,13 @@ export const fetchCommentCounts = async (goalIds: string[]): Promise<CommentCoun
   });
   return counts;
 }
+
+export const fetchUnreadCommentCount = async (user_id: string): Promise<number> => {
+  const { data } = await api.get(`/0/comments/unread/count/${user_id}`);
+  if (typeof data !== 'number') {
+    console.error('Error parsing unread comment count:', data);
+    return 0;
+  };
+
+  return data;
+}
