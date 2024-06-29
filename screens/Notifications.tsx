@@ -98,13 +98,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   markAllReadButton: {
-    backgroundColor: 'grey',
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
+    borderColor: 'lightgrey',
+    borderWidth: 2,
   },
   markAllReadButtonText: {
-    color: 'white',
+    color: 'grey',
     fontWeight: 'bold',
   },
   item: {

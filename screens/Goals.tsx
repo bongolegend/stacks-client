@@ -201,8 +201,7 @@ const styles = StyleSheet.create({
   },
   stats: {
     fontSize: 16,
-    color: 'black',
-    fontWeight: 'bold',
+    color: 'grey',
     marginBottom: 4,
     marginTop: 4,
   },
@@ -212,8 +211,10 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   createMilestoneButton: {
-    backgroundColor: '#03A9F4',
-    borderRadius: 20,
+    // backgroundColor: '#03A9F4',
+    borderColor: 'lightgrey',
+    borderWidth: 2,
+    borderRadius: 5,
     paddingHorizontal: 12,
     paddingVertical: 6,
     alignSelf: 'flex-start',
@@ -221,8 +222,8 @@ const styles = StyleSheet.create({
     marginLeft: 32,
     },
     createMilestoneButtonText: {
-    fontSize: 16,
-    color: 'white',
+    // fontSize: 16,
+    color: 'grey',
     fontWeight: 'bold',
     },
 });
