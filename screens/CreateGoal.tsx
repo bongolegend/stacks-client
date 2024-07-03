@@ -1,25 +1,28 @@
-// Filename: screens/CreateGoal.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, KeyboardAvoidingView, Platform, StyleSheet, TextInput, Button, Text, TouchableOpacity } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { createGoal } from '../services/api';
-import { useNavigation } from '@react-navigation/native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { createGoal } from '../services/api';
+import { useNavigation } from '@react-navigation/native';
 import { useNotification } from '../contexts/NotificationContext';
 import { useUser } from '../contexts/UserContext';
 
-import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
+const CustomDateInput = ({ value, onClick }) => (
+  <button className="custom-date-input" onClick={onClick}>
+    {value || 'Pick Due Date'}
+  </button>
+);
 
 const CreateGoal: React.FC = () => {
   const [title, setTitle] = useState<string>('');
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<{ title?: string; dueDate?: string; description?: string }>({});
-  
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   const queryClient = useQueryClient();
   const navigation = useNavigation();
   const { showNotification } = useNotification();
@@ -28,8 +31,8 @@ const CreateGoal: React.FC = () => {
   const mutation = useMutation({
     mutationFn: createGoal,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['goals']});
-      queryClient.invalidateQueries({queryKey: ['announcements']});
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['announcements'] });
       showNotification('Goal Posted');
       navigation.goBack();
     },
@@ -56,9 +59,21 @@ const CreateGoal: React.FC = () => {
     }
   };
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    setDueDate(date);
+    hideDatePicker();
+  };
+
   const handleDueDateChange = (date: Date) => {
     setDueDate(date);
-    setShowDatePicker(false);
   };
 
   return (
@@ -93,23 +108,20 @@ const CreateGoal: React.FC = () => {
             <DatePicker
               selected={dueDate}
               onChange={handleDueDateChange}
-              placeholderText="Pick Due Date"
-              className="date-picker"
+              customInput={<CustomDateInput />}
             />
           ) : (
             <>
-              <Button title="Pick Due Date" onPress={() => setShowDatePicker(true)} />
-              {showDatePicker && (
-                <DateTimePicker
-                  value={dueDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => handleDueDateChange(selectedDate || dueDate!)}
-                />
-              )}
-              {dueDate && <TextInput style={styles.input} value={format(dueDate, 'MM/dd/yyyy')} editable={false} />}
+              <Button title="Pick Due Date" onPress={showDatePicker} />
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
             </>
           )}
+          {dueDate && <TextInput style={styles.input} value={format(dueDate, 'MM/dd/yyyy')} editable={false} />}
         </View>
         {errors.dueDate && <Text style={styles.errorText}>{errors.dueDate}</Text>}
         
