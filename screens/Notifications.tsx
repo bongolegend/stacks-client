@@ -66,6 +66,7 @@ const Notifications: React.FC = () => {
           <Text style={styles.markAllReadButtonText}>Mark All Read</Text>
         </TouchableOpacity>
       </View>
+      {latestComments.length === 0 && <Text style={styles.noDataText}>No unreads. You're all set!</Text>}
       <FlatList
         data={latestComments}
         keyExtractor={item => item.id}
@@ -140,6 +141,10 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: 'lightgray',
+  },
+  noDataText: {
+    textAlign: 'center',
+    color: 'gray',
   },
 });
 
