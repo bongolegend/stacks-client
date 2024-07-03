@@ -144,6 +144,7 @@ const Goals: React.FC<GoalsProps> = ({ route }) => {
                 )}
                 keyExtractor={(milestone) => milestone.id}
                 nestedScrollEnabled={false}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
                 ListFooterComponent={
                   enableEdits && (
                   <TouchableOpacity style={styles.createMilestoneButton} onPress={() => handleCreateMilestone(item.id)}>
