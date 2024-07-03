@@ -37,10 +37,12 @@ const Announcements: React.FC = () => {
     );
   }
 
-  if (!goals) {
+  if (!goals || goals.length === 0) {
     return (
       <View style={styles.container}>
-        <Text>No data. Go to the Search Tab to follow people.</Text>
+        <Text style={styles.noDataText}>
+        Please go to the search tab to follow people, or create your own goals and see them here.
+        </Text>
       </View>
     );
   }
@@ -69,5 +71,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: 'white',
+  },
+  noDataText: {
+    textAlign: 'center',
+    color: 'gray',
   },
 });
