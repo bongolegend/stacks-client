@@ -45,6 +45,7 @@ const FollowUsers: React.FC<FollowUsersProps> = ({ user, users, queryKey }) => {
       <FlatList
         data={users}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.contentContainer}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('OtherUserGoals', { userId: item.id, enableEdits: false })}>
@@ -76,5 +77,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  contentContainer: {
+    paddingBottom: 150
   },
 });
