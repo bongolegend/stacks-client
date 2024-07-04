@@ -1,5 +1,6 @@
 // App.tsx
 import React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { View, ActivityIndicator } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import RootNavigator from './navigation/RootNavigator';
@@ -20,11 +21,13 @@ const App: React.FC = () => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppProviders>
-        <RootNavigator initialState={initialState} onStateChange={onStateChange} />
-      </AppProviders>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <AppProviders>
+          <RootNavigator initialState={initialState} onStateChange={onStateChange} />
+        </AppProviders>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 };
 
