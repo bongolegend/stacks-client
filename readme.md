@@ -10,7 +10,7 @@ Install deps.
 Start the dev server.
 ```npx expo start```
 
-### deploy
+### deploy to Web
 change config.ts to point to the right api, then:
 ```./deploy.sh```
 
@@ -19,6 +19,10 @@ Run bundle locally.
 
 Upload bundle to google cloud storage bucket: `www.getstacks.io`
 
-### Reference
 
-High-level reference of everything: https://www.reactnative.express/react
+### deploy to Apple App Store
+Build with the EAS service.
+```eas build --platform ios --profile production```
+
+Submit to App Store.
+```eas submit -p ios```
