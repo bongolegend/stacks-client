@@ -14,11 +14,14 @@ const CreateMilestone: React.FC = () => {
   const { showNotification } = useNotification();
   const { user } = useUser();
   const textInputRef = useRef<TextInput>(null);
+  const route = useRoute();
+  const { goalId } = route.params;
 
   const mutation = useMutation({
     mutationFn: createGoal,
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['goals']});
+      queryClient.invalidateQueries({queryKey: ['milestones', goalId]});
       showNotification('Milestone created');
       navigation.goBack();
     },
@@ -30,8 +33,6 @@ const CreateMilestone: React.FC = () => {
     }
   };
 
-  const route = useRoute();
-  const { goalId } = route.params;
 
   useEffect(() => {
     const timer = setTimeout(() => {

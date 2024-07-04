@@ -60,6 +60,21 @@ export const fetchGoalsByUser = async (user_id: string): Promise<GoalEnriched[]>
   return goals;
 };
 
+export const fetchGoalsByParent = async (parent_id: string): Promise<GoalEnriched[]> => {
+  const { data } = await api.get(`/0/goals?parent_id=${parent_id}`);
+  const goals = data.map((goal: any) => {
+    const parsed = GoalEnriched.safeParse(goal);
+    if (!parsed.success) {
+      console.error('Error parsing Goal:', parsed.error.format());
+      return null;
+    } else {
+      return parsed.data;
+    }
+  });
+  return goals;
+}
+
+
 export const fetchGoals = async (goalIds: string[]): Promise<GoalEnriched[]> => {
   const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
   const { data } = await api.get(`/0/goals?${queryString}`);

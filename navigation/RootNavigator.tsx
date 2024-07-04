@@ -12,6 +12,7 @@ import Profile from '../screens/Profile';
 import Followers from '../screens/Followers';
 import Leaders from '../screens/Leaders';
 import Goals from '../screens/Goals';
+import GoalAndMilestones from '../screens/GoalAndMilestones';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,6 +41,9 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
         headerTitleAlign: 'center',
       })} />
       <Stack.Screen name="OtherUserGoals" component={Goals} options={() => ({
+        headerTitle: '',
+      })} />
+      <Stack.Screen name="GoalAndMilestones" component={GoalAndMilestones} options={() => ({
         headerTitle: '',
       })} />
     </Stack.Navigator>
