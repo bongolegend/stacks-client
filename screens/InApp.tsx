@@ -1,6 +1,6 @@
 // InApp.tsx
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Announcements from './Announcements';
 import Search from './Search';
@@ -12,12 +12,17 @@ import Notifications from './Notifications';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
 import { useQuery } from '@tanstack/react-query'; // Import useQuery from React Query
 import { fetchUnreadCommentCount } from '../services/api';
+import registerForPushNotification from '../services/pushNotification';
 
 const Tab = createBottomTabNavigator();
 
 const InApp: React.FC = () => {
   const navigation = useNavigation();
   const { user, isLoading } = useUser();
+  
+  if (Platform.OS === 'ios' && user?.id) {
+    registerForPushNotification(user?.id);
+  }
 
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['unreadCommentCount'],

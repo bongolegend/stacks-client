@@ -117,3 +117,15 @@ export const CommentCount = z.object({
 }).strict();
 
 export type CommentCount = z.infer<typeof CommentCount>;
+
+
+export const Device = z.object({
+  id: z.string().optional(),
+  user_id: z.string(),
+  os: z.string(),
+  version: z.string(),
+  expo_push_token: z.string(),
+  active: z.boolean(),
+}).strict();
+
+export type Device = z.infer<typeof Device>;

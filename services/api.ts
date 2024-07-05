@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount } from '../types/requests';
+import { User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount, Device } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -297,4 +297,9 @@ export const fetchUnreadComments = async (user_id: string): Promise<CommentEnric
     }
   });
   return comments;
+}
+
+
+export const postDevice = async (device: Device) => {
+  await api.post(`/0/devices`, device);
 }
