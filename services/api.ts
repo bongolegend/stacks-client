@@ -1,9 +1,11 @@
 import axios from 'axios';
-import config from '../config';
+import getConfig from '../utils/config';
 import { User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount, Device } from '../types/requests';
 
+const config = getConfig();
+
 const api = axios.create({
-  baseURL: config.stacksAPI,
+  baseURL: config.stacks_api_url,
 });
 
 export const createUser = async (user: User): Promise<User> => {

@@ -36,3 +36,4 @@ yarn-error.*
 *.tsbuildinfo
 
 master_file.txt
+config.yaml
