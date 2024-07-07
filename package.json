@@ -29,8 +29,6 @@
     "expo-notifications": "~0.28.9",
     "expo-router": "^3.5.14",
     "expo-status-bar": "~1.12.1",
-    "fs": "^0.0.1-security",
-    "js-yaml": "^4.1.0",
     "react": "18.2.0",
     "react-datepicker": "^7.2.0",
     "react-dom": "18.2.0",

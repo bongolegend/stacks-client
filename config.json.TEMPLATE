@@ -1,0 +1,11 @@
+{
+  "dev": {
+    "stacks_api_url": "http://localhost:8000"
+  },
+  "dev-device": {
+    "stacks_api_url": "<public url of your host machine, assuming the stacks api is running on 0.0.0.0>"
+  },
+  "prod": {
+    "stacks_api_url": ""
+  }
+}

@@ -12,17 +12,13 @@ import Notifications from './Notifications';
 import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
 import { useQuery } from '@tanstack/react-query'; // Import useQuery from React Query
 import { fetchUnreadCommentCount } from '../services/api';
-import registerForPushNotification from '../services/pushNotification';
+import RegisterForPushNotification from '../services/pushNotification';
 
 const Tab = createBottomTabNavigator();
 
 const InApp: React.FC = () => {
   const navigation = useNavigation();
   const { user, isLoading } = useUser();
-  
-  if (Platform.OS === 'ios' && user?.id) {
-    registerForPushNotification(user?.id);
-  }
 
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['unreadCommentCount'],
@@ -42,6 +38,7 @@ const InApp: React.FC = () => {
   return (
     <View style={styles.container}>
       <HeaderBar />
+      {Platform.OS === 'ios' && user?.id && <RegisterForPushNotification userId={user?.id} />}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,

@@ -1,5 +1,6 @@
+import React from 'react';
 import { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
@@ -61,7 +62,11 @@ async function registerForPushNotificationsAsync() {
   }
 }
 
-export default function registerForPushNotification(userId: string) {
+interface RegisterForPushNotificationProps {
+  userId: string;
+}
+
+const RegisterForPushNotification: React.FC<RegisterForPushNotificationProps> = ({userId}) => {
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
@@ -87,4 +92,7 @@ export default function registerForPushNotification(userId: string) {
         Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
+  return (<View/>);
 }
+
+export default RegisterForPushNotification;

@@ -43,3 +43,4 @@ ios/
 # EAS
 credentials.json
 build-*
+config.json

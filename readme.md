@@ -58,9 +58,21 @@ Then I could finally run the build
 ```eas build -p ios --local --profile development```
 The build errored
 ```Distribution certificate with fingerprint xxxxxxxxxxx hasn't been imported successfully```
-So I downloaded my Apple Cert and added it to my keychain
+So I downloaded my Apple Cert and added it to my keychain. 
 https://developer.apple.com/account/resources/certificates/list
+
+I also added a credentials.json file to the project (gitignored) by executing this but idk if you need it.
+```eas credentials```
 
 But I still got the same error, so I installed this other universal cert and got past that error.
 https://github.com/expo/eas-cli/issues/1331#issuecomment-1235603312
 
+
+#### Note about ENV VARS
+The dev build works in a weird way, in that even though it is running on device, it relies on a Metro server
+running on my Mac. I thought that I needed to specify the EXPO_PUBLIC_ENV when building the dev build. But it turns out
+that I must specify that when running the server. So start the server like this:
+
+```EXPO_PUBLIC_ENV=dev-device npx expo start```
+
+The prefix `EXPO_PUBLIC_` is required for all env vars.

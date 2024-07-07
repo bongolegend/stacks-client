@@ -1,5 +1,4 @@
-import fs from 'fs';
-import yaml from 'js-yaml';
+import config from '../config.json';
 
 interface Config {
   [key: string]: any;
@@ -7,10 +6,10 @@ interface Config {
 
 const getConfig = (env?: string): Config => {
   if (!env) {
-    env = process.env.ENV || 'dev';
+    console.log("EXPO_PUBLIC_ENV: ", process.env.EXPO_PUBLIC_ENV);
+    env = process.env.EXPO_PUBLIC_ENV || 'dev';
+    console.log(`Using ${env} environment`);
   }
-  const fileContents = fs.readFileSync('../config.yaml', 'utf8');
-  const config: Config = yaml.load(fileContents) as Config;
   return config[env];
 };
 
