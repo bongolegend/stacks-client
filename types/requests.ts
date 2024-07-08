@@ -2,6 +2,14 @@ import { z } from 'zod';
 
 // add strict type checking to all requests
 
+export const NewUser = z.object({
+  idToken: z.string(),
+  email: z.string(),
+  username: z.string()
+}).strict();
+
+export type NewUser = z.infer<typeof NewUser>
+
 export const User = z.object({
   id: z.string(),
   username: z.string(),
@@ -10,7 +18,8 @@ export const User = z.object({
   updated_at: z.string(),
   follower: z.union([z.boolean(), z.null()]).optional(),
   leader: z.union([z.boolean(), z.null()]).optional(),
-}).strict().brand<"User">();
+  access_token: z.string().optional()
+}).strict();
 
 export type User = z.infer<typeof User>;
 

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, Alert } from 'react-native';
 import { useUser } from '../contexts/UserContext';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../navigation/types';
 import { fetchFollowCounts } from '../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +13,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 const Profile: React.FC = () => {
   const { user, setUser } = useUser();
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [followCounts, setFollowCounts] = useState<{ followers: number; leaders: number }>({ followers: 0, leaders: 0 });
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -28,7 +30,7 @@ const Profile: React.FC = () => {
   const handleSignOut = async () => {
     await AsyncStorage.clear();
     setUser(null);
-    navigation.navigate('Login');
+    navigation.navigate('FirebaseLogin');
   };
 
   return (
@@ -63,6 +65,24 @@ const Profile: React.FC = () => {
             title="Sign Out"
             onPress={() => setModalVisible(true)}
             color="red"
+          />
+        </View>
+        <View style={styles.button}>
+          <Button
+            title={`Firebase Login page`}
+            onPress={() => {
+              console.log('Navigating to FirebaseLogin');
+              navigation.navigate('FirebaseLogin');
+            }}
+          />
+        </View>
+        <View style={styles.button}>
+          <Button
+            title={`Demo`}
+            onPress={() => {
+              console.log('Navigating to demo');
+              navigation.navigate('Demo');
+            }}
           />
         </View>
       </View>

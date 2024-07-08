@@ -1,13 +1,17 @@
 import axios from 'axios';
 import config from '../config';
-import { User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount } from '../types/requests';
+import { NewUser, User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount } from '../types/requests';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
 });
 
-export const createUser = async (user: User): Promise<User> => {
-  const { data } = await api.post('/0/users', user);
+export const createUser = async (user: NewUser): Promise<User> => {
+  const { data } = await api.post('/0/users', {email: user.email, username: user.username},{
+    headers: {
+      'Authorization': `Bearer ${user.idToken}`,
+      'Content-Type': 'application/json'
+    }});
   const parsed = User.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing User:', parsed.error.format());
@@ -26,9 +30,14 @@ export const fetchUser = async (id: string): Promise<User> => {
   return parsed.data;
 }
 
-export const loginUser = async (username: string): Promise<User> => {
-  const { data } = await api.get(`/0/users?username=${username}`);
-  const parsed = User.safeParse(data[0]);
+export const loginUser = async ({idToken,email}): Promise<User> => {
+  const { data } = await api.get(`/0/users/login?email=${email}`,{
+    headers: {
+      'Authorization': `Bearer ${idToken}`,
+      'Content-Type': 'application/json'
+    }}
+  );
+  const parsed = User.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing User:', parsed.error.format());
     throw new Error('Error parsing User');
@@ -204,7 +213,7 @@ export const fetchLeaders = async (user_id: string): Promise<User[]> => {
   return users;
 };
 
-export const fetchFollowCounts = async (user_id: string): Promise<FollowCount> => {
+export const fetchFollowCounts = async (user_id: string): Promise<FollowCounts> => {
   const { data } = await api.get(`/0/follows/counts/${user_id}`);
   const parsed = FollowCounts.safeParse(data);
   if (!parsed.success) {

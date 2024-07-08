@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const USER_KEY = 'currentUser';
+const ACCESS_TOKEN = 'accessToken'
 
 export const saveUser = async (user: any) => {
   const userString = JSON.stringify(user);
@@ -29,3 +30,31 @@ export const removeUser = async () => {
     await AsyncStorage.removeItem(USER_KEY);
   }
 };
+
+
+export const saveAccessToken = async (jwt_token: string) => {
+  if (Platform.OS === 'web') {
+    localStorage.setItem(ACCESS_TOKEN, jwt_token);
+  } else {
+    await AsyncStorage.setItem(ACCESS_TOKEN, jwt_token);
+  }
+};
+
+export const getAccessToken = async () => {
+  if (Platform.OS === 'web') {
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
+    return accessToken ? accessToken : null;
+  } else {
+    const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN);
+    return accessToken
+  }
+};
+
+export const removeAccessToken = async () => {
+  if (Platform.OS === 'web') {
+    localStorage.removeItem(ACCESS_TOKEN);
+  } else {
+    await AsyncStorage.removeItem(ACCESS_TOKEN);
+  }
+};
+
