@@ -9,7 +9,6 @@ import { RootStackParamList } from '../navigation/types';
 import { useUser } from '../contexts/UserContext';
 import { FIREBASE_AUTH, googleSignIn, signInWithGoogle, isFirstLogin } from '../utils/firebase-auth';
 
-
 const FirebaseLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +30,7 @@ const FirebaseLogin: React.FC = () => {
 
   const createUserMutation = useMutation({
     mutationFn: createUser,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log('createUser Data', data)
       setUser(data);
       navigation.navigate('InApp');
@@ -43,7 +42,7 @@ const FirebaseLogin: React.FC = () => {
     try {
       const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
       console.log('singup userCreds', userCredentials)
-      const idToken = await userCredentials.user.getIdToken()
+      const idToken = await userCredentials.user.getIdToken(true)
       // what is the correct way to pass args?
       createUserMutation.mutate({username: username, email:email, idToken: idToken })
       alert('Account Created')
@@ -57,7 +56,7 @@ const FirebaseLogin: React.FC = () => {
 
   const loginUserMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log('loginUser Data', data)
       setUser(data);
       navigation.navigate('InApp');
@@ -69,8 +68,8 @@ const FirebaseLogin: React.FC = () => {
     try {
       const userCredentials = await signInWithEmailAndPassword(auth, email, password);
       console.log('singIn userCreds', userCredentials)
-      const idToken = await userCredentials.user.getIdToken()
-      loginUserMutation.mutate({idToken, email})
+      const idToken = await userCredentials.user.getIdToken(true)
+      loginUserMutation.mutate({idToken: idToken, email: email})
     }catch (error: any) {
       console.log(error);
       alert('Sign in failed: ' + error.message);
@@ -86,7 +85,7 @@ const FirebaseLogin: React.FC = () => {
     try {
       const userCredentials = await signInWithPopup(FIREBASE_AUTH, provider);
       console.log('user credentials:', userCredentials);
-      const idToken = await userCredentials.user.getIdToken()
+      const idToken = await userCredentials.user.getIdToken(true)
       const email = userCredentials.user.email
       const isNewUser = isFirstLogin(
         userCredentials.user.metadata.creationTime, 
@@ -96,7 +95,7 @@ const FirebaseLogin: React.FC = () => {
         const googleUserName = userCredentials.user.email.split('@')[0]
         createUserMutation.mutate({email:email, username: googleUserName, idToken: idToken})
       }else{
-        loginUserMutation.mutate({idToken, email})
+        loginUserMutation.mutate({idToken: idToken, email: email})
          }
       alert("signed in with Google")
     } catch (error) {

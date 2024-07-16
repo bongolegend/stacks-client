@@ -1,6 +1,8 @@
 import axios from 'axios';
 import config from '../config';
 import { NewUser, User, EmojiType, Goal, Follow, Reaction, CommentEnriched, FollowCounts, GoalEnriched, CommentCount } from '../types/requests';
+import { getAuthHeader } from '../utils/firebase-auth';
+import { saveAccessToken } from './storage';
 
 const api = axios.create({
   baseURL: config.stacksAPI,
@@ -12,7 +14,9 @@ export const createUser = async (user: NewUser): Promise<User> => {
       'Authorization': `Bearer ${user.idToken}`,
       'Content-Type': 'application/json'
     }});
-  const parsed = User.safeParse(data);
+  const { access_token, ...userData } = data; 
+  await saveAccessToken(access_token)
+  const parsed = User.safeParse(userData);
   if (!parsed.success) {
     console.error('Error parsing User:', parsed.error.format());
     throw new Error('Error parsing User');
@@ -21,7 +25,8 @@ export const createUser = async (user: NewUser): Promise<User> => {
 };
 
 export const fetchUser = async (id: string): Promise<User> => {
-  const { data } = await api.get(`/0/users/${id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/users/${id}`, authHead );
   const parsed = User.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing User:', parsed.error.format());
@@ -33,11 +38,12 @@ export const fetchUser = async (id: string): Promise<User> => {
 export const loginUser = async ({idToken,email}): Promise<User> => {
   const { data } = await api.get(`/0/users/login?email=${email}`,{
     headers: {
-      'Authorization': `Bearer ${idToken}`,
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${idToken}`
     }}
   );
-  const parsed = User.safeParse(data);
+  const { access_token, ...userData } = data; 
+  await saveAccessToken(access_token)
+  const parsed = User.safeParse(userData);
   if (!parsed.success) {
     console.error('Error parsing User:', parsed.error.format());
     throw new Error('Error parsing User');
@@ -46,7 +52,9 @@ export const loginUser = async ({idToken,email}): Promise<User> => {
 };
 
 export const createGoal = async (goal: Goal): Promise<Goal> => {
-  const { data } = await api.post('/0/goals', goal);
+  const authHead = await getAuthHeader()
+  console.log('authHead', authHead)
+  const { data } = await api.post('/0/goals', goal, authHead);
   const parsed = Goal.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Goal:', parsed.error.format());
@@ -56,7 +64,9 @@ export const createGoal = async (goal: Goal): Promise<Goal> => {
 };
 
 export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
-  const { data } = await api.get(`/0/goals/${user_id}`);
+  const authHead = await getAuthHeader()
+  console.log(`fetchGoals > user_id: ${user_id}`)
+  const { data } = await api.get(`/0/goals?user_id=${user_id}`, authHead);
   const goals = data.map((goal: any) => {
     const parsed = GoalEnriched.safeParse(goal);
     if (!parsed.success) {
@@ -70,7 +80,8 @@ export const fetchGoals = async (user_id: string): Promise<GoalEnriched[]> => {
 };
 
 export const fetchAnnouncements = async (user_id: string): Promise<GoalEnriched[]> => {
-  const { data } = await api.get(`/0/goals/announcements/${user_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/goals/announcements/${user_id}`, authHead);
   const announcements = data.map((result: any) => {
     const parsed = GoalEnriched.safeParse(result);
     if (!parsed.success) {
@@ -84,7 +95,8 @@ export const fetchAnnouncements = async (user_id: string): Promise<GoalEnriched[
 };
 
 export const followUser = async (follower_id: string, leader_id: string): Promise<Follow> => {
-  const { data } = await api.post('/0/follows', { follower_id, leader_id });
+  const authHead = await getAuthHeader()
+  const { data } = await api.post('/0/follows', { follower_id, leader_id }, authHead);
   const parsed = Follow.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Follow:', parsed.error.format());
@@ -94,7 +106,8 @@ export const followUser = async (follower_id: string, leader_id: string): Promis
 };
 
 export const unfollowUser = async (follower_id: string, leader_id: string): Promise<Follow> => {
-  const { data } = await api.delete(`/0/follows/${follower_id}/leaders/${leader_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.delete(`/0/follows/${follower_id}/leaders/${leader_id}`, authHead);
   const parsed = Follow.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Follow:', parsed.error.format());
@@ -104,7 +117,8 @@ export const unfollowUser = async (follower_id: string, leader_id: string): Prom
 };
 
 export const updateGoalCompletion = async ({ id, is_completed }: { id: string; is_completed: boolean }): Promise<Goal> => {
-  const { data } = await api.patch(`/0/goals/${id}`, { is_completed });
+  const authHead = await getAuthHeader()
+  const { data } = await api.patch(`/0/goals/${id}`, { is_completed }, authHead);
   const parsed = Goal.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Goal:', parsed.error.format());
@@ -114,8 +128,9 @@ export const updateGoalCompletion = async ({ id, is_completed }: { id: string; i
 };
 
 export const addReaction = async (userId: string, goalId: string, emoji: EmojiType): Promise<Reaction> => {
+  const authHead = await getAuthHeader()
   const reaction = { user_id: userId, goal_id: goalId, reaction: emoji, reaction_library: "rn-emoji-keyboard:^1.7.0" };
-  const { data } = await api.post(`/0/reactions`, reaction);
+  const { data } = await api.post(`/0/reactions`, reaction, authHead);
   const parsed = Reaction.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Reaction:', parsed.error.format());
@@ -125,8 +140,9 @@ export const addReaction = async (userId: string, goalId: string, emoji: EmojiTy
 };
 
 export const fetchReactions = async (goalIds: string[]): Promise<{ [key: string]: Reaction[] }> => {
+  const authHead = await getAuthHeader()
   const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
-  const { data } = await api.get(`/0/reactions?${queryString}`);
+  const { data } = await api.get(`/0/reactions?${queryString}`, authHead);
 
   const parsedReactions: { [key: string]: Reaction[] } = {};
 
@@ -148,7 +164,8 @@ export const fetchReactions = async (goalIds: string[]): Promise<{ [key: string]
 };
 
 export const addComment = async (comment: Comment): Promise<Comment> => {
-  const { data } = await api.post(`/0/comments`, comment);
+  const authHead = await getAuthHeader()
+  const { data } = await api.post(`/0/comments`, comment, authHead);
   const parsed = CommentEnriched.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing Comment:', parsed.error.format());
@@ -158,7 +175,8 @@ export const addComment = async (comment: Comment): Promise<Comment> => {
 };
 
 export const fetchComments = async (goalId: string): Promise<CommentEnriched[]> => {
-  const { data } = await api.get(`/0/comments?goal_id=${goalId}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/comments?goal_id=${goalId}`, authHead);
   const comments = data.map((comment: any) => {
     const parsed = CommentEnriched.safeParse(comment);
     if (!parsed.success) {
@@ -172,7 +190,8 @@ export const fetchComments = async (goalId: string): Promise<CommentEnriched[]> 
 };
 
 export const fetchUsers = async (user_id: string): Promise<User[]> => {
-  const { data } = await api.get(`/0/users/search/${user_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/users/search/${user_id}`, authHead);
   const users = data.map((user: any) => {
     const parsed = User.safeParse(user);
     if (!parsed.success) {
@@ -186,7 +205,8 @@ export const fetchUsers = async (user_id: string): Promise<User[]> => {
 };
 
 export const fetchFollowers = async (user_id: string): Promise<User[]> => {
-  const { data } = await api.get(`/0/users/followers/${user_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/users/followers/${user_id}`, authHead);
   const users = data.map((user: any) => {
     const parsed = User.safeParse(user);
     if (!parsed.success) {
@@ -200,7 +220,8 @@ export const fetchFollowers = async (user_id: string): Promise<User[]> => {
 };
 
 export const fetchLeaders = async (user_id: string): Promise<User[]> => {
-  const { data } = await api.get(`/0/users/leaders/${user_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/users/leaders/${user_id}`, authHead);
   const users = data.map((user: any) => {
     const parsed = User.safeParse(user);
     if (!parsed.success) {
@@ -214,7 +235,8 @@ export const fetchLeaders = async (user_id: string): Promise<User[]> => {
 };
 
 export const fetchFollowCounts = async (user_id: string): Promise<FollowCounts> => {
-  const { data } = await api.get(`/0/follows/counts/${user_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/follows/counts/${user_id}`, authHead);
   const parsed = FollowCounts.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing FollowCount:', parsed.error.format());
@@ -224,7 +246,8 @@ export const fetchFollowCounts = async (user_id: string): Promise<FollowCounts> 
 };
 
 export const fetchCommentCount = async (goal_id: string): Promise<CommentCount> => {
-  const { data } = await api.get(`/0/comments/count?goal_id=${goal_id}`);
+  const authHead = await getAuthHeader()
+  const { data } = await api.get(`/0/comments/count?goal_id=${goal_id}`, authHead);
   const parsed = CommentCount.safeParse(data);
   if (!parsed.success) {
     console.error('Error parsing CommentCount:', parsed.error.format());
@@ -234,8 +257,9 @@ export const fetchCommentCount = async (goal_id: string): Promise<CommentCount> 
 }
 
 export const fetchCommentCounts = async (goalIds: string[]): Promise<CommentCount[]> => {
+  const authHead = await getAuthHeader()
   const queryString = goalIds.map(id => `goal_ids=${id}`).join('&');
-  const { data } = await api.get(`/0/comments/count?${queryString}`);
+  const { data } = await api.get(`/0/comments/count?${queryString}`, authHead);
   const counts = data.map((count: any) => {
     const parsed = CommentCount.safeParse(count);
     if (!parsed.success) {

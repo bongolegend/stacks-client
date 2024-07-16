@@ -7,5 +7,4 @@ export type RootStackParamList = {
     Comments: { announcementId: string };
     Followers: undefined;
     Leaders: undefined;
-    Demo: undefined;
   };

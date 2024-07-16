@@ -76,15 +76,6 @@ const Profile: React.FC = () => {
             }}
           />
         </View>
-        <View style={styles.button}>
-          <Button
-            title={`Demo`}
-            onPress={() => {
-              console.log('Navigating to demo');
-              navigation.navigate('Demo');
-            }}
-          />
-        </View>
       </View>
       <SignOutModal
         visible={isModalVisible}

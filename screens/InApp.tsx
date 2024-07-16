@@ -23,6 +23,8 @@ const InApp: React.FC = () => {
     );
   }
 
+  console.log("InApp.txt > user", user)
+
   return (
     <View style={styles.container}>
       <HeaderBar />

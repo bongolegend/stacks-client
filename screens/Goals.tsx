@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchGoals, updateGoalCompletion, fetchFollowCounts, fetchUser, fetchReactions, fetchCommentCounts } from '../services/api';
@@ -9,6 +9,7 @@ import CompletionModal from '../components/CompletionModal';
 import { GoalEnriched } from '../types/requests';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { getUser } from '../services/storage';
 
 interface GoalsProps {
   route: {
@@ -21,10 +22,21 @@ interface GoalsProps {
 
 const Goals: React.FC<GoalsProps> = ({ route }) => {
   const { userId, enableEdits } = route.params;
+  console.log(`Goals.txt > userId ${userId}`)
   const queryClient = useQueryClient();
   const [selectedItem, setSelectedItem] = useState<GoalEnriched | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  // this is here for debugging
+  useEffect(() => {
+    console.log("useeffect called")
+    const fetchUserCredentials = async () => {
+      const user = await getUser();
+      console.log('User from local storage:', user); // Log the user credentials
+    };
+    fetchUserCredentials();
+  }, []);
 
   const { data: displayedUser, isLoading: userLoading } = useQuery({
     queryKey: ['user', userId],

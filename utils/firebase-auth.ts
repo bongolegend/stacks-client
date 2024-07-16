@@ -1,8 +1,7 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import {getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth' 
-import { getAnalytics } from "firebase/analytics";
 import 'firebase/auth'
+import { getAccessToken, saveAccessToken } from "../services/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDGZ6FFlCO1owQljmo-GbKFTBuNmi9FsjQ",
@@ -49,6 +48,39 @@ export const isFirstLogin = (creationTime: string, lastSignInTime: string): bool
 
   // Allow a margin of error of 5 seconds
   return timeDifference <= 5;
+}
+
+// PROBABLY DEPRICATED
+export const getValidIdToken = async () => {
+  const user = FIREBASE_AUTH.currentUser;
+
+  if (!user) {
+    throw new Error("No user is signed in");
+  }
+
+  // check if token is expired,refresh if expired
+  let idToken = await getAccessToken();
+  const [, payloadBase64] = idToken.split('.');
+  const payload = JSON.parse(atob(payloadBase64));
+  const now = Date.now() / 1000; // Current time in seconds
+  if(payload.exp < now){
+    console.log("idToken expired, refreshing token")
+    idToken = await user.getIdToken(true);
+    await saveAccessToken(idToken);
+  }
+
+  return idToken;
+}
+
+export const getAuthHeader = async () => {
+  const accessToken = await getAccessToken()
+  console.log('accessToken:', accessToken);
+  const authHead = {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    }}
+  return authHead
 }
 
 

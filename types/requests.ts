@@ -18,7 +18,6 @@ export const User = z.object({
   updated_at: z.string(),
   follower: z.union([z.boolean(), z.null()]).optional(),
   leader: z.union([z.boolean(), z.null()]).optional(),
-  access_token: z.string().optional()
 }).strict();
 
 export type User = z.infer<typeof User>;

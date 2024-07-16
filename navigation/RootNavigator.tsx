@@ -13,7 +13,6 @@ import Followers from '../screens/Followers';
 import Leaders from '../screens/Leaders';
 import Goals from '../screens/Goals';
 import FirebaseLogin from '../screens/FirebaseLogin';
-import Demo from  '../screens/Demo'
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,9 +23,8 @@ const RootNavigator: React.FC<{ initialState?: any, onStateChange?: (state: any)
     documentTitle={{formatter: () => "getstacks.io"}}
   >
     <Stack.Navigator screenOptions={{ headerShown: true }}>
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="FirebaseLogin" component={FirebaseLogin} options={{ headerShown: false }} />
-      <Stack.Screen name="Demo" component={Demo} options={{ headerShown: false }} />
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="InApp" component={InApp} options={{ headerShown: false }} />
       <Stack.Screen name="CreateGoal" component={CreateGoal} options={{ headerShown: false }} />
       <Stack.Screen name="CreateMilestone" component={CreateMilestone} options={{ headerShown: false }} />

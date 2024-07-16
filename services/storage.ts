@@ -1,12 +1,16 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FIREBASE_AUTH } from '../utils/firebase-auth';
+
 
 const USER_KEY = 'currentUser';
-const ACCESS_TOKEN = 'accessToken'
+export const ACCESS_TOKEN = 'jwtAccessToken'
+const REFRESH_TOKEN = 'refreshToken'
 
 export const saveUser = async (user: any) => {
   const userString = JSON.stringify(user);
   if (Platform.OS === 'web') {
+    console.log("saving user info in localStorage", userString)
     localStorage.setItem(USER_KEY, userString);
   } else {
     await AsyncStorage.setItem(USER_KEY, userString);
@@ -32,13 +36,15 @@ export const removeUser = async () => {
 };
 
 
-export const saveAccessToken = async (jwt_token: string) => {
+export const saveAccessToken = async (accessToken: string) => {
   if (Platform.OS === 'web') {
-    localStorage.setItem(ACCESS_TOKEN, jwt_token);
+    console.log(`Storing access token to localStorage: ${accessToken}`)
+    localStorage.setItem(ACCESS_TOKEN, accessToken);
   } else {
-    await AsyncStorage.setItem(ACCESS_TOKEN, jwt_token);
+    await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
   }
 };
+
 
 export const getAccessToken = async () => {
   if (Platform.OS === 'web') {
@@ -57,4 +63,22 @@ export const removeAccessToken = async () => {
     await AsyncStorage.removeItem(ACCESS_TOKEN);
   }
 };
+
+
+export const refreshToken = async () => {
+  const user = FIREBASE_AUTH.currentUser;
+  if (user) {
+    // This will automatically refresh the token and update the user's ID token.
+    await user.getIdToken(true); 
+    const newIdToken = await user.getIdToken();
+    if (Platform.OS === 'web') {
+      localStorage.setItem(ACCESS_TOKEN, newIdToken);
+    } else {
+      await AsyncStorage.setItem(ACCESS_TOKEN, newIdToken);
+    }
+    return newIdToken;
+  }
+  throw new Error('No current user');
+};
+
 
